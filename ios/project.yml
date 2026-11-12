@@ -3,6 +3,9 @@ options:
   minimumXcodeGenVersion: 2.42.0
   deploymentTarget:
     iOS: '16.0'
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
 settings:
   base:
     SWIFT_VERSION: '5.0'
@@ -10,7 +13,6 @@ settings:
     TARGETED_DEVICE_FAMILY: '1,2'
     CODE_SIGN_STYLE: Automatic
     DEVELOPMENT_TEAM: $(ADSHIELD_TEAM_ID)
-    ADSHIELD_BUNDLE_PREFIX: de.adshield.ios
     ADSHIELD_APP_GROUP: group.$(ADSHIELD_BUNDLE_PREFIX)
     MARKETING_VERSION: 0.1.0
     CURRENT_PROJECT_VERSION: 1

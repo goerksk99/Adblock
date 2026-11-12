@@ -1,0 +1,71 @@
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[2/4] Write swift-version--5120F65D826AB869.txt
+[4/5] Compiling AdShieldCore DNS.swift
+[5/9] Compiling AdShieldCoreTests CoreTests.swift
+[5/9] /workspace/Adblock/ios/.build/x86_64-unknown-linux-gnu/release/AdShieldCorePackageDiscoveredTests.derived/all-discovered-tests.swift
+[6/10] Write sources
+[8/11] Compiling AdShieldCorePackageDiscoveredTests AdShieldCoreTests.swift
+[8/11] /workspace/Adblock/ios/.build/x86_64-unknown-linux-gnu/release/AdShieldCorePackageTests.derived/runner.swift
+[9/12] Write sources
+[11/13] Compiling AdShieldCorePackageTests runner.swift
+[11/13] Write Objects.LinkFileList
+[12/13] Linking AdShieldCorePackageTests.xctest
+Build complete! (7.18s)
+Test Suite 'All tests' started at 2026-11-12 18:09:39.749
+Test Suite 'release.xctest' started at 2026-11-12 18:09:39.750
+Test Suite 'CoreTests' started at 2026-11-12 18:09:39.750
+Test Case 'CoreTests.testBundledHostsCountAndLicenses' started at 2026-11-12 18:09:39.750
+Test Case 'CoreTests.testBundledHostsCountAndLicenses' passed (0.787 seconds)
+Test Case 'CoreTests.testDNSBlockAndServfailPreserveQuestion' started at 2026-11-12 18:09:40.537
+Test Case 'CoreTests.testDNSBlockAndServfailPreserveQuestion' passed (0.101 seconds)
+Test Case 'CoreTests.testEDNSUDPLimits' started at 2026-11-12 18:09:40.638
+Test Case 'CoreTests.testEDNSUDPLimits' passed (0.0 seconds)
+Test Case 'CoreTests.testHostsCommentsAndAliases' started at 2026-11-12 18:09:40.638
+Test Case 'CoreTests.testHostsCommentsAndAliases' passed (0.0 seconds)
+Test Case 'CoreTests.testRejectFragmentsWrongDestinationAndShortPackets' started at 2026-11-12 18:09:40.638
+Test Case 'CoreTests.testRejectFragmentsWrongDestinationAndShortPackets' passed (0.0 seconds)
+Test Case 'CoreTests.testRejectMalformedOrCrossQueryDNS' started at 2026-11-12 18:09:40.639
+Test Case 'CoreTests.testRejectMalformedOrCrossQueryDNS' passed (0.0 seconds)
+Test Case 'CoreTests.testRootDomainQueriesAreForwardable' started at 2026-11-12 18:09:40.639
+Test Case 'CoreTests.testRootDomainQueriesAreForwardable' passed (0.0 seconds)
+Test Case 'CoreTests.testRulesNormalizeAndMatchBoundaries' started at 2026-11-12 18:09:40.639
+Test Case 'CoreTests.testRulesNormalizeAndMatchBoundaries' passed (0.0 seconds)
+Test Case 'CoreTests.testTCPConnectionLimitAndReset' started at 2026-11-12 18:09:40.639
+Test Case 'CoreTests.testTCPConnectionLimitAndReset' passed (0.0 seconds)
+Test Case 'CoreTests.testTCPHandshakeSplitQueryAndMSS' started at 2026-11-12 18:09:40.640
+Test Case 'CoreTests.testTCPHandshakeSplitQueryAndMSS' passed (0.0 seconds)
+Test Case 'CoreTests.testTCPRetransmitsThenExpires' started at 2026-11-12 18:09:40.640
+Test Case 'CoreTests.testTCPRetransmitsThenExpires' passed (0.0 seconds)
+Test Case 'CoreTests.testUDPRoundTripBothFamiliesAndChecksums' started at 2026-11-12 18:09:40.640
+Test Case 'CoreTests.testUDPRoundTripBothFamiliesAndChecksums' passed (0.0 seconds)
+Test Suite 'CoreTests' passed at 2026-11-12 18:09:40.640
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.89 (0.89) seconds
+Test Suite 'DoHClientTests' started at 2026-11-12 18:09:40.640
+Test Case 'DoHClientTests.testRejectHTMLAndShortDNS' started at 2026-11-12 18:09:40.640
+Test Case 'DoHClientTests.testRejectHTMLAndShortDNS' passed (0.004 seconds)
+Test Case 'DoHClientTests.testRejectHTTPError' started at 2026-11-12 18:09:40.644
+Test Case 'DoHClientTests.testRejectHTTPError' passed (0.001 seconds)
+Test Case 'DoHClientTests.testRejectOversizedBody' started at 2026-11-12 18:09:40.644
+Test Case 'DoHClientTests.testRejectOversizedBody' passed (0.101 seconds)
+Test Case 'DoHClientTests.testValidMIMEAndBinaryBody' started at 2026-11-12 18:09:40.746
+Test Case 'DoHClientTests.testValidMIMEAndBinaryBody' passed (0.001 seconds)
+Test Suite 'DoHClientTests' passed at 2026-11-12 18:09:40.746
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.106 (0.106) seconds
+Test Suite 'HostsSnapshotTests' started at 2026-11-12 18:09:40.746
+Test Case 'HostsSnapshotTests.testRejectTruncatedHTMLAndInvalidEncoding' started at 2026-11-12 18:09:40.747
+Test Case 'HostsSnapshotTests.testRejectTruncatedHTMLAndInvalidEncoding' passed (0.0 seconds)
+Test Case 'HostsSnapshotTests.testRejectWrongCountMissingHeaderAndSize' started at 2026-11-12 18:09:40.747
+Test Case 'HostsSnapshotTests.testRejectWrongCountMissingHeaderAndSize' passed (0.0 seconds)
+Test Case 'HostsSnapshotTests.testValidDeclaredCount' started at 2026-11-12 18:09:40.747
+Test Case 'HostsSnapshotTests.testValidDeclaredCount' passed (0.0 seconds)
+Test Suite 'HostsSnapshotTests' passed at 2026-11-12 18:09:40.747
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'release.xctest' passed at 2026-11-12 18:09:40.747
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.997 (0.997) seconds
+Test Suite 'All tests' passed at 2026-11-12 18:09:40.747
+	 Executed 19 tests, with 0 failures (0 unexpected) in 0.997 (0.997) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.0.3 (18c42c19cac3faf)
+✔ Test run with 0 tests passed after 0.001 seconds.

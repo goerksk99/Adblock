@@ -1,0 +1,4 @@
+// Shared defaults for the app and Network Extension.
+ADSHIELD_BUNDLE_PREFIX = de.adshield.ios
+// Optional local overrides created by scripts/configure-signing.sh; no passwords or keys.
+#include? "Signing.local.xcconfig"

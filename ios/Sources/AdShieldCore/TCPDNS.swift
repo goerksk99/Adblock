@@ -16,7 +16,7 @@ public final class TCPDNS {
       sent = now
       window = Int(read16(p.segment, 14))
       var i = 20
-      var end = Int(p.segment[12] >> 4) * 4
+      let end = Int(p.segment[12] >> 4) * 4
       while i < end {
         let kind = p.segment[i]
         if kind == 0 { break }

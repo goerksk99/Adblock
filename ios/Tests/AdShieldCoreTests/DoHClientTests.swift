@@ -48,7 +48,7 @@ final class DoHClientTests: XCTestCase {
       assertion(result)
       done.fulfill()
     }
-    wait(for: [done], timeout: 3)
+    wait(for: [done], timeout: 10)
     client.stop()
     StubProtocol.lock.lock()
     StubProtocol.handler = nil

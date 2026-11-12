@@ -75,8 +75,8 @@ public struct DNSQuery {
       offset += n
     }
     guard offset + 4 <= b.count, read16(b, offset + 2) == 1 else { throw WireError.unsupported }
-    let d = labels.joined(separator: ".").lowercased()
-    guard d.utf8.count <= 253, !d.isEmpty else { throw WireError.malformed }
+    let d = labels.isEmpty ? "." : labels.joined(separator: ".").lowercased()
+    guard d.utf8.count <= 253 else { throw WireError.malformed }
     bytes = b
     domain = d
     type = read16(b, offset)

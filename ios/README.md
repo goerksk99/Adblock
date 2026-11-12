@@ -2,6 +2,8 @@
 
 Eigenständige SwiftUI-App mit lokalem Packet-Tunnel-DNS-Filter für iOS 16 oder neuer. Dies ist eine **Entwicklungsfassung als Quellprojekt**, noch keine signierte, auf einem iPhone geprüfte IPA. Die Android-App bleibt separat.
 
+19 Swift-Tests bestehen jeweils in Debug und Release. Der Apple-SDK-Build wird zusätzlich über GitHub Actions angefordert; ein wartender Lauf ist kein erfolgreicher Build.
+
 ## Enthalten
 
 - Lokaler systemweiter DNS-Tunnel über `NEPacketTunnelProvider`, DNS über UDP/TCP und IPv4/IPv6.
@@ -11,6 +13,12 @@ Eigenständige SwiftUI-App mit lokalem Packet-Tunnel-DNS-Filter für iOS 16 oder
 - Erlaubnis- und Sperrlisten einschließlich Subdomains. Erlaubnisse haben Vorrang. Internationale Namen als Punycode.
 - Aktivierung, Tagesstatistiken, Filterpause, Ausnahmen und Einstellungen auf Deutsch. App-Group-Dateien verbinden App und Extension; keine Domain-Verlaufsprotokolle, Telemetrie oder Konten.
 - TCP mit begrenzten Verbindungen/Puffern, Segmentierung nach MSS, Wiederholungen und Zeitlimits. Große UDP-Antworten erzwingen TCP; ohne EDNS gilt das 512-Byte-Limit, mit EDNS maximal 1232 Bytes.
+
+## Ohne eigenen Mac den Build prüfen
+
+Im GitHub-Repository ist `.github/workflows/ios-check.yml` eingerichtet. Ein Push auf `main` mit iOS-Änderungen oder „Run workflow“ startet auf `macos-15` Tests, einen unsignierten Release-Geräte-Build und einen Simulator-Start samt Screenshot. Ein angenommener oder wartender Lauf ist noch kein erfolgreicher Build. Die Ergebnisse stehen unter GitHub Actions. Es werden keine Apple-Secrets benötigt und nichts bei Apple veröffentlicht.
+
+Konkrete nächste Schritte: [NEXT-STEPS.md](NEXT-STEPS.md).
 
 ## Auf einem Mac vorbereiten
 
@@ -23,11 +31,11 @@ cd ios
 open AdShield.xcodeproj
 ```
 
-Das Skript führt die Swift-Kerntests und einen **unsignierten** Geräte-Build aus. Es installiert oder veröffentlicht nichts. Linux kann den Swift-Kern testen, unterstützt aber kein Xcode/iPhone-SDK.
+Das Skript führt die Swift-Kerntests und einen **unsignierten** Release-Geräte-Build einschließlich Archiv aus. Es installiert oder veröffentlicht nichts. Linux kann den Swift-Kern testen, unterstützt aber kein Xcode/iPhone-SDK.
 
 ## Auf dem eigenen iPhone installieren
 
-1. In Xcode das Projekt öffnen. Ein eigenes, eindeutiges `ADSHIELD_BUNDLE_PREFIX` setzen, beispielsweise `de.meinname.adshield`. Daraus entstehen App-ID, Extension-ID (`.Tunnel`) und gemeinsame Gruppe (`group.` + App-ID). Beide Targets müssen dieselben Werte verwenden.
+1. In Xcode das Projekt öffnen. Mit `scripts/configure-signing.sh TEAM_ID eindeutige.bundle.id` ein eigenes, eindeutiges `ADSHIELD_BUNDLE_PREFIX` setzen, beispielsweise `de.meinname.adshield`. Daraus entstehen App-ID, Extension-ID (`.Tunnel`) und gemeinsame Gruppe (`group.` + App-ID). Beide Targets müssen dieselben Werte verwenden.
 2. Für **beide Targets** unter „Signing & Capabilities“ dasselbe bezahlte Apple-Developer-Team wählen. Automatic Signing aktivieren. Die Capabilities **Network Extensions / Packet Tunnel** und **App Groups** sowie die gemeinsame Gruppe im Developer-Portal für beide IDs aktivieren. Profile müssen die in `project.yml` erzeugten Entitlements enthalten. Keine Zugangsdaten ins Projekt oder Chat schreiben.
 3. Verbundenes iPhone als Ziel und Scheme **AdShield** wählen. Developer Mode auf dem Gerät aktivieren, dann „Run“. Der Simulator ersetzt keinen echten Network-Extension-Test.
 4. AdShield öffnen, „Aktivieren“ wählen und Apples VPN-Konfiguration erlauben. Ein externer VPN-Anbieter ist nicht erforderlich. Andere aktive VPNs können kollidieren.

@@ -50,6 +50,13 @@ final class CoreTests: XCTestCase {
     XCTAssertEqual(q.reply(code: 2)[3] & 15, 2)
     XCTAssertEqual(q.reply(code: 0, truncated: true)[2] & 2, 2)
   }
+  func testRootDomainQueriesAreForwardable() throws {
+    let root = Data([0x12, 0x34, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1])
+    let parsed = try DNSQuery(root)
+    XCTAssertEqual(parsed.domain, ".")
+    XCTAssertFalse(FilterRules(hosts: ["example.com"]).blocks(parsed.domain))
+    XCTAssertTrue(parsed.validResponse(parsed.reply(code: 0)))
+  }
   func testEDNSUDPLimits() throws {
     XCTAssertEqual(try DNSQuery(query).udpLimit, 512)
     var edns = query

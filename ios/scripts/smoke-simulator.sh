@@ -12,7 +12,9 @@ if [[ "$ADSHIELD_ALREADY_BOOTED" != Booted ]]; then
 fi
 xcrun simctl bootstatus "$ADSHIELD_SIMULATOR_ID" -b
 xcrun simctl install "$ADSHIELD_SIMULATOR_ID" build/simulator/Build/Products/Debug-iphonesimulator/AdShield.app
-xcrun simctl launch "$ADSHIELD_SIMULATOR_ID" de.adshield.ios
+ADSHIELD_SIMULATOR_BUNDLE_ID="$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" build/simulator/Build/Products/Debug-iphonesimulator/AdShield.app/Info.plist)"
+xcrun simctl launch "$ADSHIELD_SIMULATOR_ID" "$ADSHIELD_SIMULATOR_BUNDLE_ID"
 sleep 3
+xcrun simctl spawn "$ADSHIELD_SIMULATOR_ID" launchctl list | python3 -c 'import sys; bundle=sys.argv[1]; rows=[line.split() for line in sys.stdin]; assert any(len(row)>=3 and row[0].isdigit() and "UIKitApplication:"+bundle in row[2] for row in rows),"AdShield läuft nach dem Start nicht mehr"' "$ADSHIELD_SIMULATOR_BUNDLE_ID"
 xcrun simctl io "$ADSHIELD_SIMULATOR_ID" screenshot build/simulator-overview.png
 printf '%s\n' 'Simulator-Start und Screenshot abgeschlossen. Dies prüft keinen echten DNS-Tunnel.'
