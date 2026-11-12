@@ -1,0 +1,50 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[2/5] Write swift-version--5120F65D826AB869.txt
+[4/7] Emitting module AdShieldCore
+[5/7] Compiling AdShieldCore TCPDNS.swift
+[7/15] Emitting module AdShieldCoreTests
+[8/15] Compiling AdShieldCoreTests CoreTests.swift
+[9/15] /workspace/Adblock/ios/.build/x86_64-unknown-linux-gnu/debug/AdShieldCorePackageDiscoveredTests.derived/all-discovered-tests.swift
+[10/16] Write sources
+[12/19] Compiling AdShieldCorePackageDiscoveredTests AdShieldCoreTests.swift
+[13/19] Compiling AdShieldCorePackageDiscoveredTests all-discovered-tests.swift
+[14/19] Emitting module AdShieldCorePackageDiscoveredTests
+[15/17] Write Objects.LinkFileList
+[16/17] Linking AdShieldCorePackageTests.xctest
+Build complete! (2.88s)
+Test Suite 'All tests' started at 2026-11-12 17:50:44.366
+Test Suite 'debug.xctest' started at 2026-11-12 17:50:44.368
+Test Suite 'CoreTests' started at 2026-11-12 17:50:44.368
+Test Case 'CoreTests.testBundledHostsCountAndLicenses' started at 2026-11-12 17:50:44.368
+Test Case 'CoreTests.testBundledHostsCountAndLicenses' passed (2.585 seconds)
+Test Case 'CoreTests.testDNSBlockAndServfailPreserveQuestion' started at 2026-11-12 17:50:46.953
+Test Case 'CoreTests.testDNSBlockAndServfailPreserveQuestion' passed (0.101 seconds)
+Test Case 'CoreTests.testEDNSUDPLimits' started at 2026-11-12 17:50:47.054
+Test Case 'CoreTests.testEDNSUDPLimits' passed (0.0 seconds)
+Test Case 'CoreTests.testHostsCommentsAndAliases' started at 2026-11-12 17:50:47.054
+Test Case 'CoreTests.testHostsCommentsAndAliases' passed (0.0 seconds)
+Test Case 'CoreTests.testRejectFragmentsWrongDestinationAndShortPackets' started at 2026-11-12 17:50:47.054
+Test Case 'CoreTests.testRejectFragmentsWrongDestinationAndShortPackets' passed (0.0 seconds)
+Test Case 'CoreTests.testRejectMalformedOrCrossQueryDNS' started at 2026-11-12 17:50:47.055
+Test Case 'CoreTests.testRejectMalformedOrCrossQueryDNS' passed (0.0 seconds)
+Test Case 'CoreTests.testRulesNormalizeAndMatchBoundaries' started at 2026-11-12 17:50:47.055
+Test Case 'CoreTests.testRulesNormalizeAndMatchBoundaries' passed (0.0 seconds)
+Test Case 'CoreTests.testTCPConnectionLimitAndReset' started at 2026-11-12 17:50:47.055
+Test Case 'CoreTests.testTCPConnectionLimitAndReset' passed (0.002 seconds)
+Test Case 'CoreTests.testTCPHandshakeSplitQueryAndMSS' started at 2026-11-12 17:50:47.057
+Test Case 'CoreTests.testTCPHandshakeSplitQueryAndMSS' passed (0.001 seconds)
+Test Case 'CoreTests.testTCPRetransmitsThenExpires' started at 2026-11-12 17:50:47.058
+Test Case 'CoreTests.testTCPRetransmitsThenExpires' passed (0.0 seconds)
+Test Case 'CoreTests.testUDPRoundTripBothFamiliesAndChecksums' started at 2026-11-12 17:50:47.059
+Test Case 'CoreTests.testUDPRoundTripBothFamiliesAndChecksums' passed (0.0 seconds)
+Test Suite 'CoreTests' passed at 2026-11-12 17:50:47.059
+	 Executed 11 tests, with 0 failures (0 unexpected) in 2.691 (2.691) seconds
+Test Suite 'debug.xctest' passed at 2026-11-12 17:50:47.059
+	 Executed 11 tests, with 0 failures (0 unexpected) in 2.691 (2.691) seconds
+Test Suite 'All tests' passed at 2026-11-12 17:50:47.059
+	 Executed 11 tests, with 0 failures (0 unexpected) in 2.691 (2.691) seconds
+◇ Test run started.
+↳ Testing Library Version: 6.0.3 (18c42c19cac3faf)
+✔ Test run with 0 tests passed after 0.001 seconds.

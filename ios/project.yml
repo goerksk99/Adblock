@@ -1,0 +1,88 @@
+name: AdShield
+options:
+  minimumXcodeGenVersion: 2.42.0
+  deploymentTarget:
+    iOS: '16.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    IPHONEOS_DEPLOYMENT_TARGET: '16.0'
+    TARGETED_DEVICE_FAMILY: '1,2'
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: $(ADSHIELD_TEAM_ID)
+    ADSHIELD_BUNDLE_PREFIX: de.adshield.ios
+    ADSHIELD_APP_GROUP: group.$(ADSHIELD_BUNDLE_PREFIX)
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+packages:
+  AdShieldCore:
+    path: .
+targets:
+  AdShield:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - Shared
+      - path: Resources
+        buildPhase: resources
+    dependencies:
+      - package: AdShieldCore
+      - target: AdShieldTunnel
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(ADSHIELD_BUNDLE_PREFIX)
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: AdShield
+        AdShieldAppGroup: $(ADSHIELD_APP_GROUP)
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: App/AdShield.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        com.apple.security.application-groups: ['$(ADSHIELD_APP_GROUP)']
+  AdShieldTunnel:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Tunnel
+      - Shared
+      - path: Resources
+        excludes: [Assets.xcassets]
+        buildPhase: resources
+    dependencies:
+      - package: AdShieldCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(ADSHIELD_BUNDLE_PREFIX).Tunnel
+        APPLICATION_EXTENSION_API_ONLY: true
+        SKIP_INSTALL: true
+    info:
+      path: Tunnel/Info.plist
+      properties:
+        CFBundleDisplayName: AdShield DNS
+        AdShieldAppGroup: $(ADSHIELD_APP_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.networkextension.packet-tunnel
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PacketTunnelProvider
+    entitlements:
+      path: Tunnel/AdShield.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        com.apple.security.application-groups: ['$(ADSHIELD_APP_GROUP)']
+schemes:
+  AdShield:
+    build:
+      targets:
+        AdShield: all
+    run:
+      config: Debug
+    archive:
+      config: Release
