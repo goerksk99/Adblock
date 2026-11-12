@@ -1,0 +1,37 @@
+name: iOS build and tests
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['ios/**', '.github/workflows/ios-check.yml']
+  pull_request:
+    paths: ['ios/**', '.github/workflows/ios-check.yml']
+permissions:
+  contents: read
+concurrency:
+  group: ios-check-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Test core and build app and extension against iOS SDK
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p ios/validation
+          ios/scripts/build-macos.sh 2>&1 | tee ios/validation/macos-build.log
+      - name: Save unsigned app and logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: AdShield-iOS-build
+          path: |
+            ios/validation/macos-build.log
+            ios/build/Build/Products/Debug-iphoneos/*.app
+          if-no-files-found: warn
+          retention-days: 14
