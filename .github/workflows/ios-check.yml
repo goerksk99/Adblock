@@ -14,7 +14,7 @@ concurrency:
 jobs:
   build:
     runs-on: macos-15
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Install XcodeGen
@@ -25,13 +25,29 @@ jobs:
           set -o pipefail
           mkdir -p ios/validation
           ios/scripts/build-macos.sh 2>&1 | tee ios/validation/macos-build.log
+      - name: Launch app in iPhone simulator and capture screenshot
+        shell: bash
+        run: |
+          set -o pipefail
+          ios/scripts/smoke-simulator.sh 2>&1 | tee ios/validation/simulator-build.log
+      - name: Report compiler errors in public check annotations
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          for log in Path("ios/validation").glob("*-build.log"):
+              errors = [line for line in log.read_text(errors="replace").splitlines() if "error:" in line.lower()]
+              for line in errors[:20]:
+                  message = line.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+                  print(f"::error title=iOS compiler::{message}")
       - name: Save unsigned app and logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: AdShield-iOS-build
           path: |
-            ios/validation/macos-build.log
-            ios/build/Build/Products/Debug-iphoneos/*.app
+            ios/validation/*-build.log
+            ios/build/AdShield.xcarchive/Products/Applications/*.app
+            ios/build/simulator-overview.png
           if-no-files-found: warn
           retention-days: 14

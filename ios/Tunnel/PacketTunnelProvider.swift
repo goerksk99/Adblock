@@ -1,4 +1,5 @@
 import AdShieldCore
+import AdShieldNetworking
 import Darwin
 import Foundation
 import NetworkExtension

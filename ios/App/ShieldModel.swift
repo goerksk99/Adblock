@@ -28,7 +28,12 @@ import NetworkExtension
   init() {
     configuration = SharedStore.read("configuration.json", fallback: ShieldConfiguration())
     refreshStatistics()
-    domainCount = (try? SharedStore.rules().hosts.count) ?? 0
+    Task { [weak self] in
+      let count = await Task.detached(priority: .utility) {
+        (try? SharedStore.rules().hosts.count) ?? 0
+      }.value
+      self?.domainCount = count
+    }
     updated = SharedStore.read("updated.json", fallback: Optional<Date>.none)
     observer = NotificationCenter.default.addObserver(
       forName: .NEVPNStatusDidChange, object: nil, queue: .main
@@ -94,11 +99,16 @@ import NetworkExtension
       status = m.connection.status
     } catch { self.error = error.localizedDescription }
   }
-  func save() {
+  @discardableResult func save() -> Bool {
     do {
       try SharedStore.write(configuration, name: "configuration.json")
       reloadTunnel()
-    } catch { self.error = error.localizedDescription }
+      return true
+    } catch {
+      self.error = error.localizedDescription
+      configuration = SharedStore.read("configuration.json", fallback: ShieldConfiguration())
+      return false
+    }
   }
   private func reloadTunnel() {
     guard connected, let session = manager?.connection as? NETunnelProviderSession else { return }
@@ -130,8 +140,7 @@ import NetworkExtension
         configuration.deny.sort()
       }
     }
-    save()
-    return true
+    return save()
   }
   func updateHosts() async {
     guard !updating else { return }
@@ -153,21 +162,9 @@ import NetworkExtension
         guard data.count < 8_000_000 else { throw URLError(.dataLengthExceedsMaximum) }
         data.append(byte)
       }
+      let downloaded = data
       let count = try await Task.detached(priority: .utility) {
-        guard let text = String(data: data, encoding: .utf8) else {
-          throw URLError(.cannotDecodeContentData)
-        }
-        let hosts = DomainRules.hosts(text)
-        guard (50000...300000).contains(hosts.count) else { throw URLError(.cannotParseResponse) }
-        // Compare the upstream's own declared domain count; HTML/error pages cannot become filters.
-        guard
-          let line = text.split(whereSeparator: \.isNewline).first(where: {
-            $0.contains("# Number of unique domains:")
-          }),
-          let declared = Int(line.split(separator: ":").last!.filter(\.isNumber)),
-          declared == hosts.count
-        else { throw URLError(.cannotParseResponse) }
-        return hosts.count
+        try HostsSnapshot.validate(downloaded).count
       }.value
       let target = try SharedStore.directory().appendingPathComponent("hosts")
       try data.write(

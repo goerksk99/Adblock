@@ -59,6 +59,8 @@ targets:
         buildPhase: resources
     dependencies:
       - package: AdShieldCore
+      - package: AdShieldCore
+        product: AdShieldNetworking
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(ADSHIELD_BUNDLE_PREFIX).Tunnel

@@ -49,11 +49,7 @@ enum SharedStore {
       )
     }
     let data = try Data(contentsOf: source)
-    guard data.count <= 8_000_000, let text = String(data: data, encoding: .utf8) else {
-      throw WireError.malformed
-    }
-    let hosts = DomainRules.hosts(text)
-    guard hosts.count >= 50000 else { throw WireError.malformed }
+    let hosts = try HostsSnapshot.validate(data)
     let config = read("configuration.json", fallback: ShieldConfiguration())
     return FilterRules(hosts: hosts, allow: config.allow, deny: config.deny)
   }
