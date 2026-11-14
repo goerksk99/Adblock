@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.ScreenshotCoverageTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:44.420Z" hostname="9638f5fdf17b" time="0.139">
+  <properties/>
+  <testcase name="screenshotDomainsAreFilteredBeforeUpstreamForEveryAddressType" classname="de.adshield.core.ScreenshotCoverageTest" time="0.06"/>
+  <testcase name="explicitRulesCloseEveryReportedGapForUdpAndTcp" classname="de.adshield.core.ScreenshotCoverageTest" time="0.078"/>
+  <system-out><![CDATA[SCREENSHOT_AUDIT domains=43 bundled_blocked=27 uncovered=16 DNS_cases=129
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

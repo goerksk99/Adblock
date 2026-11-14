@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.CnameProtectionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.195Z" hostname="9638f5fdf17b" time="0.007">
+  <properties/>
+  <testcase name="pausedFilteringBypassesAliasProtection" classname="de.adshield.core.CnameProtectionTest" time="0.0"/>
+  <testcase name="legitimateCdnAliasesRemainAllowed" classname="de.adshield.core.CnameProtectionTest" time="0.001"/>
+  <testcase name="unrelatedAnswerCannotCauseFalseBlock" classname="de.adshield.core.CnameProtectionTest" time="0.001"/>
+  <testcase name="allowedFirstPartyAndAllowedTargetWin" classname="de.adshield.core.CnameProtectionTest" time="0.001"/>
+  <testcase name="cachedAliasesRecheckedAfterRuleChanges" classname="de.adshield.core.CnameProtectionTest" time="0.001"/>
+  <testcase name="hiddenTrackerAndMultiHopAreBlocked" classname="de.adshield.core.CnameProtectionTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

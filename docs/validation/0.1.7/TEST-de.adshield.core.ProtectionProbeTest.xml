@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.ProtectionProbeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:44.414Z" hostname="9638f5fdf17b" time="0.005">
+  <properties/>
+  <testcase name="mismatchedIdentityCannotPass" classname="de.adshield.core.ProtectionProbeTest" time="0.003"/>
+  <testcase name="realBlockingAndResolutionAreBothRequired" classname="de.adshield.core.ProtectionProbeTest" time="0.001"/>
+  <testcase name="resolutionFailureDistinguishedFromBlockingFailure" classname="de.adshield.core.ProtectionProbeTest" time="0.0"/>
+  <testcase name="reportsMissingBlockInsteadOfFalseSuccess" classname="de.adshield.core.ProtectionProbeTest" time="0.001"/>
+  <testcase name="upstreamNxdomainAloneCannotPretendToBeLocalBlocking" classname="de.adshield.core.ProtectionProbeTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

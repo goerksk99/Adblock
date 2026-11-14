@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.AsyncTcpTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.179Z" hostname="9638f5fdf17b" time="0.011">
+  <properties/>
+  <testcase name="closedSessionDoesNotStartDeferredUpstreamWork" classname="de.adshield.core.AsyncTcpTest" time="0.009"/>
+  <testcase name="rejectedWorkReturnsFramedServfail" classname="de.adshield.core.AsyncTcpTest" time="0.001"/>
+  <testcase name="otherFlowsProgressWhileFirstResolutionIsPending" classname="de.adshield.core.AsyncTcpTest" time="0.001"/>
+  <testcase name="halfCloseWaitsForPendingResolution" classname="de.adshield.core.AsyncTcpTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

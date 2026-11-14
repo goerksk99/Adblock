@@ -68,6 +68,21 @@ data class IpPacket(val version: Int, val source: ByteArray, val destination: By
             return h+s
         }
     }
+    fun tcpReset():ByteArray? {
+        require(protocol==6)
+        val flags=transport[13].toInt() and 255
+        if(flags and 4!=0)return null
+        val reset=ByteArray(20)
+        Wire.put16(reset,0,destinationPort);Wire.put16(reset,2,sourcePort);reset[12]=0x50
+        if(flags and 16!=0){reset[13]=4;Wire.put32(reset,4,Wire.u32(transport,8))}
+        else {
+            reset[13]=20
+            val size=transport.size-(transport[12].toInt() ushr 4 and 15)*4
+            val consume=size+(if(flags and 2!=0)1 else 0)+(if(flags and 1!=0)1 else 0)
+            Wire.put32(reset,8,(Wire.u32(transport,4)+consume) and 0xffffffffL)
+        }
+        return reverse(reset)
+    }
     fun udpResponse(dns: ByteArray): ByteArray {
         require(protocol==17)
         val s=ByteArray(8+dns.size)

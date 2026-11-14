@@ -36,13 +36,25 @@ class VpnPacketPathTest {
         android.os.ParcelFileDescriptor.AutoCloseInputStream(command).bufferedReader().use{it.readText()}
         assertNull("Test VPN authorization must be granted by the shell",VpnService.prepare(context))
         val unavailable=java.util.concurrent.atomic.AtomicBoolean(false)
+        val loadGate=java.util.concurrent.atomic.AtomicReference<java.util.concurrent.CountDownLatch?>(null)
+        val loadEntered=java.util.concurrent.atomic.AtomicReference(java.util.concurrent.CountDownLatch(1))
         val resolver=object:ManagedUpstream {
             override fun exchange(query:ByteArray):ByteArray {
+                val name=Message(query).question.name.toString()
+                val gate=loadGate.get()
+                if(gate!=null && name.startsWith("queue-load-")){
+                    loadEntered.get().countDown();check(gate.await(60,java.util.concurrent.TimeUnit.SECONDS)){"Load test gate timed out"}
+                }
                 if(unavailable.get())throw java.net.SocketTimeoutException("Controlled test failure")
                 return Message(query).apply {
                 header.setFlag(Flags.QR.toInt());header.setFlag(Flags.RA.toInt())
                 val question=question
-                val owner=if(question.name==Name("adshield-cloak-test.invalid.")) {
+                if(question.name==Name("https-alias-test.invalid.") && question.type==Type.HTTPS)addRecord(HTTPSRecord(question.name,DClass.IN,60,0,Name("doubleclick.net."),emptyList()),Section.ANSWER)
+                if(question.name==Name("svcb-alias-test.invalid.") && question.type==Type.SVCB)addRecord(SVCBRecord(question.name,DClass.IN,60,0,Name("doubleclick.net."),emptyList()),Section.ANSWER)
+                val owner=if(question.name==Name("sub.dname-test.invalid.")){
+                    addRecord(DNAMERecord(Name("dname-test.invalid."),DClass.IN,60,Name("doubleclick.net.")),Section.ANSWER)
+                    Name("sub.doubleclick.net.")
+                }else if(question.name==Name("adshield-cloak-test.invalid.")) {
                     addRecord(CNAMERecord(question.name,DClass.IN,60,Name("doubleclick.net.")),Section.ANSWER)
                     Name("doubleclick.net.")
                 } else question.name
@@ -89,6 +101,10 @@ class VpnPacketPathTest {
                 assertEquals(Rcode.NXDOMAIN,udp(address,"doubleclick.net.",Type.A).rcode)
                 assertEquals(Rcode.NXDOMAIN,udp(address,"adshield-cloak-test.invalid.",Type.A).rcode)
                 assertEquals(Rcode.NXDOMAIN,tcp(address,"adshield-cloak-test.invalid.",Type.AAAA).rcode)
+                for((alias,type)in listOf("sub.dname-test.invalid." to Type.A,"https-alias-test.invalid." to Type.HTTPS,"svcb-alias-test.invalid." to Type.SVCB)){
+                    assertEquals(alias,Rcode.NXDOMAIN,udp(address,alias,type).rcode)
+                    assertEquals(alias,Rcode.NXDOMAIN,tcp(address,alias,type).rcode)
+                }
                 val v6=tcp(address,"example.com.",Type.AAAA)
                 assertEquals(Rcode.NOERROR,v6.rcode);assertTrue(v6.getSection(Section.ANSWER).first() is AAAARecord)
             }
@@ -114,6 +130,34 @@ class VpnPacketPathTest {
             }
             assertTrue("Encrypted-port probe must reach TUN",received.get()>beforeEncrypted)
             println("CAPTURED_RESOLVER_NON_DNS_DROPPED")
+            // Two blocked TCP operations must not starve independent UDP work.
+            val clients=java.util.concurrent.Executors.newFixedThreadPool(2)
+            val tcpGate=java.util.concurrent.CountDownLatch(1)
+            loadGate.set(tcpGate);loadEntered.set(java.util.concurrent.CountDownLatch(1))
+            try {
+                val one=clients.submit<Message>{tcp(DnsVpnService.DNS4,"queue-load-one.invalid.",Type.A)}
+                assertTrue(loadEntered.get().await(30,java.util.concurrent.TimeUnit.SECONDS))
+                val two=clients.submit<Message>{tcp(DnsVpnService.DNS4,"queue-load-two.invalid.",Type.A)}
+                delay(300)
+                assertEquals(Rcode.NOERROR,udp(DnsVpnService.DNS4,"example.org.",Type.A).rcode)
+                tcpGate.countDown();one.get(30,java.util.concurrent.TimeUnit.SECONDS);two.get(30,java.util.concurrent.TimeUnit.SECONDS)
+            }finally{tcpGate.countDown();loadGate.set(null);clients.shutdownNow()}
+            println("UDP_SURVIVES_STALLED_TCP")
+            val udpGate=java.util.concurrent.CountDownLatch(1)
+            loadGate.set(udpGate);loadEntered.set(java.util.concurrent.CountDownLatch(1))
+            try {
+                DatagramSocket().use {socket ->
+                    vpn.bindSocket(socket);socket.connect(InetAddress.getByName(DnsVpnService.DNS4),53);socket.soTimeout=20000
+                    val first=question("queue-load-0.invalid.",Type.A);socket.send(DatagramPacket(first,first.size))
+                    assertTrue(loadEntered.get().await(30,java.util.concurrent.TimeUnit.SECONDS))
+                    repeat(100){i ->val q=question("queue-load-${i+1}.invalid.",Type.A);socket.send(DatagramPacket(q,q.size))}
+                    val reply=DatagramPacket(ByteArray(4096),4096);socket.receive(reply)
+                    assertEquals(Rcode.SERVFAIL,Message(reply.data.copyOf(reply.length)).rcode)
+                }
+            }finally{udpGate.countDown();loadGate.set(null)}
+            assertEquals(Stage.ACTIVE,DnsVpnService.state.value.stage)
+            println("UDP_OVERLOAD_RETURNS_SERVFAIL_WITHOUT_VPN_FAILURE")
+            withTimeout(30000){while(udp(DnsVpnService.DNS4,"recovery.example.org.",Type.A).rcode!=Rcode.NOERROR)delay(100)}
             // UDP connect selects a source/route without sending internet traffic.
             DatagramSocket().use{socket ->socket.connect(InetAddress.getByName("192.0.2.99"),443)
                 assertNotEquals(DnsVpnService.CLIENT4,socket.localAddress.hostAddress)
@@ -124,7 +168,7 @@ class VpnPacketPathTest {
             assertEquals(Rcode.NOERROR,udp(DnsVpnService.DNS4,"doubleclick.net.",Type.A).rcode)
             app.store.rule("doubleclick.net",false,false)
             unavailable.set(true)
-            for(index in 0 until 4){
+            for(index in 0 until 8){
                 if(DnsVpnService.state.value.stage==Stage.ERROR)break
                 try {assertEquals(Rcode.SERVFAIL,udp(DnsVpnService.DNS4,"timeout-$index.invalid.",Type.A).rcode)}
                 catch(e:SocketTimeoutException){if(DnsVpnService.state.value.stage!=Stage.ERROR)throw e else break}
@@ -159,6 +203,7 @@ class VpnPacketPathTest {
             println("PACKET_FAILURE received=${received.get()} state=${DnsVpnService.state.value}")
             throw e
         }finally {
+            loadGate.getAndSet(null)?.countDown()
             context.startForegroundService(Intent(context,DnsVpnService::class.java).setAction(DnsVpnService.STOP))
             withTimeout(30000){DnsVpnService.state.first{it.stage==Stage.OFF || it.stage==Stage.ERROR}}
             app.instrumentationUpstream=null

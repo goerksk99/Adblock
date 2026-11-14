@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.DnsEngineTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.210Z" hostname="9638f5fdf17b" time="0.027">
+  <properties/>
+  <testcase name="blockedNxdomainWithNegativeTtl" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="responseQuestionMismatchRejected" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="cacheAgesTtlAndExpires" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="aRecord" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="udpTruncatesTcpPreserves" classname="de.adshield.core.DnsEngineTest" time="0.005"/>
+  <testcase name="nonQueryRefused" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="aaaaRecord" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="dnsServfailIsAQueryErrorWithoutPretendingTransportFailed" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="timeoutBecomesServfail" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="responseIdMismatchRejected" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="malformedQuery" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="invalidWireInputCannotCrashEngine" classname="de.adshield.core.DnsEngineTest" time="0.008"/>
+  <testcase name="cacheClearDuringInflightResponseDoesNotRepopulateStaleCache" classname="de.adshield.core.DnsEngineTest" time="0.003"/>
+  <testcase name="ednsLimitIsRespected" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="cacheRestoresTransactionId" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="upstreamRcodePreserved" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="negativeCacheUsesSoaMinimum" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="passThroughSkipsLocalRules" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="newBlockRuleOverridesWarmCache" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

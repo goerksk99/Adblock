@@ -85,7 +85,12 @@ class ShieldModel(application:Application):AndroidViewModel(application){
         app.store.exclude(pkg,value)
         if(protection.value.stage in setOf(Stage.ACTIVE,Stage.PAUSED,Stage.STARTING))service(DnsVpnService.REBUILD)
     }}
-    fun update(){viewModelScope.launch{app.ready.await();app.filters.update()}}
+    private var updateJob:Job?=null
+    fun update(){if(updateJob?.isActive==true)return;updateJob=viewModelScope.launch{
+        try{app.ready.await();if(!app.filters.update())notice.value="Filterupdate fehlgeschlagen. Die bisherigen Listen bleiben aktiv; Verbindung und freien Speicher prüfen."}
+        catch(e:CancellationException){throw e}
+        catch(_:Exception){notice.value="Filter konnten nicht aktualisiert werden. Bitte Verbindung und Speicher prüfen."}
+    }}
     private fun rebuildIfActive(){if(protection.value.stage in setOf(Stage.ACTIVE,Stage.PAUSED,Stage.STARTING))service(DnsVpnService.REBUILD)}
     fun maximal(value:Boolean){viewModelScope.launch{app.store.maximal(value);rebuildIfActive()}}
     fun dnsGuard(value:Boolean){viewModelScope.launch{app.store.dnsGuard(value);rebuildIfActive()}}

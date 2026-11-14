@@ -1,0 +1,93 @@
+{
+  "tests": 108,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "name": "de.adshield.core.PacketTest",
+      "tests": 14,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.AsyncTcpTest",
+      "tests": 4,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.WorkQueueTest",
+      "tests": 4,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.OisdRulesTest",
+      "tests": 3,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.CnameProtectionTest",
+      "tests": 6,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.ProtectedSocketFactoryTest",
+      "tests": 3,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.DomainRulesTest",
+      "tests": 14,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.CacheBudgetTest",
+      "tests": 2,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.DnsBypassPolicyTest",
+      "tests": 3,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.MaximalRulesTest",
+      "tests": 4,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.DnsFailureMessagesTest",
+      "tests": 2,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.ScreenshotCoverageTest",
+      "tests": 2,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.StreamingFiltersTest",
+      "tests": 3,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.FragmentTest",
+      "tests": 8,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.ProtectionProbeTest",
+      "tests": 5,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.DnsEngineTest",
+      "tests": 19,
+      "failures": 0
+    },
+    {
+      "name": "de.adshield.core.AdvancedAliasTest",
+      "tests": 12,
+      "failures": 0
+    }
+  ]
+}

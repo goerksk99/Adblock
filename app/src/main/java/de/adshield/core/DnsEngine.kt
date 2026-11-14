@@ -8,13 +8,19 @@ enum class Outcome { ALLOWED, BLOCKED, ERROR }
 data class DnsResult(val wire: ByteArray, val outcome: Outcome, val transportFailure: Boolean = false, val failureCause: Exception? = null)
 
 /** Bounded DNS message cache. TTLs age using monotonic time, never wall-clock time. */
-class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstream, private val clock: () -> Long = { System.nanoTime() / 1_000_000 }) {
+class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstream, private val clock: () -> Long = { System.nanoTime() / 1_000_000 }, private val cacheBudgetBytes:Int=4*1024*1024) {
     private data class Entry(val wire: ByteArray, val created: Long, val ttl: Long)
-    private val cache = object : LinkedHashMap<String, Entry>(256, .75f, true) {
-        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Entry>?) = size > 512
+    private val cache = LinkedHashMap<String,Entry>(256,.75f,true)
+    private var cacheBytes=0
+    private fun cost(key:String,entry:Entry)=key.length*2+entry.wire.size+128
+    @Synchronized private fun remember(key:String,entry:Entry,generation:Long){
+        if(generation!=cacheGeneration || cost(key,entry)>cacheBudgetBytes)return
+        cache.remove(key)?.let{cacheBytes-=cost(key,it)}
+        cache[key]=entry;cacheBytes+=cost(key,entry)
+        while(cache.size>512 || cacheBytes>cacheBudgetBytes){val first=cache.entries.iterator().next();cacheBytes-=cost(first.key,first.value);cache.remove(first.key)}
     }
     private var cacheGeneration = 0L
-    @Synchronized fun clearCache() { cacheGeneration++;cache.clear() }
+    @Synchronized fun clearCache() { cacheGeneration++;cache.clear();cacheBytes=0 }
     fun resolve(bytes: ByteArray, tcp: Boolean = false, filtering: Boolean = true): DnsResult {
         val query = try { Message(bytes) } catch (_: Exception) { return DnsResult(bareError(bytes), Outcome.ERROR) }
         val question = query.question
@@ -34,6 +40,7 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
             val snapshot = synchronized(this) { cacheGeneration to cache[key]?.takeIf { now - it.created < it.ttl * 1000 } }
             val cached = snapshot.second
             val response: Message
+            var pendingEntry:Entry?=null
             if (cached != null) {
                 val age = ((now - cached.created) / 1000).coerceAtLeast(0)
                 response = Message(cached.wire)
@@ -48,7 +55,9 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
                     }
                 }
             } else {
-                val raw = upstream.exchange(bytes)
+                val raw = try{upstream.exchange(bytes)}catch(e:Exception){
+                    return DnsResult(error(query,Rcode.SERVFAIL).toWire(),Outcome.ERROR,true,e)
+                }
                 require(raw.size in 12..65535) { "Ungültige DNS-Antwortgröße" }
                 response = Message(raw)
                 require(response.header.getFlag(Flags.QR.toInt()) && response.header.id == query.header.id && response.header.getCount(Section.QUESTION) == 1 && response.question == question && response.header.opcode == Opcode.QUERY) { "DNS-Antwort passt nicht zur Anfrage" }
@@ -57,42 +66,24 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
                     val records = (Section.ANSWER..Section.ADDITIONAL).flatMap { response.getSection(it) }.filterNot { it is OPTRecord }
                     val negative = response.getSection(Section.AUTHORITY).filterIsInstance<SOARecord>().minOfOrNull { minOf(it.minimum, it.ttl) }
                     val ttl = if (response.rcode == Rcode.NXDOMAIN || response.getSection(Section.ANSWER).isEmpty()) minOf(negative ?: 0, records.minOfOrNull { it.ttl } ?: 0) else records.minOfOrNull { it.ttl } ?: 0
-                    if (ttl > 0) synchronized(this) { if(cacheGeneration == snapshot.first)cache[key] = Entry(raw, now, ttl.coerceAtMost(300)) }
+                    if (ttl > 0 && bytes.size<=4096)pendingEntry=Entry(raw,clock(),ttl.coerceAtMost(300))
                 }
             }
             // Recheck raw/cached aliases against current rules on every request.
             // Only follow the chain rooted in this question; unrelated answer names cannot block it.
-            if(filtering && !filter.allowed(question.name.toString()) && blockedAlias(question.name,response))
-                return blocked(query,tcp,udpSize)
+            val blockedAlias=AliasPolicy.apply(filter,question,response,filtering)
+            pendingEntry?.let{remember(key,it,snapshot.first)}
+            if(blockedAlias)return blocked(query,tcp,udpSize)
             response.header.id = query.header.id
-            DnsResult(response.toWire(if (tcp) 65535 else udpSize), Outcome.ALLOWED)
-        } catch (error: Exception) { DnsResult(error(query, Rcode.SERVFAIL).toWire(), Outcome.ERROR, true, error) }
+            DnsResult(response.toWire(if (tcp) 65535 else udpSize), if(response.rcode in setOf(Rcode.NOERROR,Rcode.NXDOMAIN))Outcome.ALLOWED else Outcome.ERROR)
+        } catch (error: Exception) { DnsResult(error(query, Rcode.SERVFAIL).toWire(), Outcome.ERROR, false, error) }
     }
-    private fun blockedAlias(start:Name,response:Message):Boolean {
-        val aliases=response.getSection(Section.ANSWER).filterIsInstance<CNAMERecord>().associateBy{it.name}
-        var current=start
-        val seen=HashSet<Name>()
-        repeat(16){
-            if(!seen.add(current))return false
-            val target=aliases[current]?.target?:return false
-            if(filter.blocked(target.toString()))return true
-            current=target
-        }
-        return false
-    }
+    fun unavailable(bytes:ByteArray):DnsResult = DnsResponses.unavailable(bytes)
     private fun blocked(query:Message,tcp:Boolean,udpSize:Int):DnsResult {
         val response=error(query,Rcode.NXDOMAIN)
         response.addRecord(SOARecord(query.question.name,DClass.IN,60,Name("blocked.invalid."),Name("hostmaster.blocked.invalid."),1,60,60,60,60),Section.AUTHORITY)
         return DnsResult(response.toWire(if(tcp)65535 else udpSize),Outcome.BLOCKED)
     }
-    private fun error(query: Message, code: Int) = Message(query.header.id).apply {
-        header.setFlag(Flags.QR.toInt()); header.setFlag(Flags.RA.toInt())
-        if (query.header.getFlag(Flags.RD.toInt())) header.setFlag(Flags.RD.toInt())
-        header.rcode = code
-        query.question?.let { addRecord(it, Section.QUESTION) }
-    }
-    private fun bareError(query: ByteArray): ByteArray = ByteArray(12).apply {
-        if (query.size >= 2) { this[0] = query[0]; this[1] = query[1] }
-        this[2] = 0x80.toByte(); this[3] = Rcode.FORMERR.toByte()
-    }
+    private fun error(query:Message,code:Int)=DnsResponses.error(query,code)
+    private fun bareError(query:ByteArray)=DnsResponses.bare(query)
 }

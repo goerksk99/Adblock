@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.OisdRulesTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:42.726Z" hostname="9638f5fdf17b" time="1.644">
+  <properties/>
+  <testcase name="additionalDomainsNeverReachUpstreamAndAllowRulesWin" classname="de.adshield.core.OisdRulesTest" time="1.009"/>
+  <testcase name="invalidListsFailClosedBeforeReplacingCurrentFiles" classname="de.adshield.core.OisdRulesTest" time="0.001"/>
+  <testcase name="measuredAdditionalCoverageAndBoundaries" classname="de.adshield.core.OisdRulesTest" time="0.634"/>
+  <system-out><![CDATA[OISD_COVERAGE previous=326947 source=228023 newly_covered=121559 effective=455868
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

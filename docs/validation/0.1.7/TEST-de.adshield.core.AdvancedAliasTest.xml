@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.AdvancedAliasTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.050Z" hostname="9638f5fdf17b" time="0.126">
+  <properties/>
+  <testcase name="invalidAliasesAreNeverCached" classname="de.adshield.core.AdvancedAliasTest" time="0.099"/>
+  <testcase name="httpsAndSvcbAliasModesBlockKnownTargets" classname="de.adshield.core.AdvancedAliasTest" time="0.008"/>
+  <testcase name="serviceBindingsForAnotherQueryTypeAreNotInterpretedAsAliases" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="aliasRootMeansUnavailableServiceNotBrokenDns" classname="de.adshield.core.AdvancedAliasTest" time="0.0"/>
+  <testcase name="loopConflictingAliasesAndOverlongChainsFailOnlyThisQuery" classname="de.adshield.core.AdvancedAliasTest" time="0.006"/>
+  <testcase name="cachedServiceAlternativesRestoreAfterAnAllowChange" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="serviceRootAndExplicitAllowArePreserved" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="closestDnameAndUnrelatedRecordPreserveNormalSite" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="serviceAlternativesAreFilteredWithoutBlockingContentOrigin" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="dnameRewriteAndLongestOwner" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <testcase name="unrelatedAndWrongClassBindingsCannotBlockThisQuestion" classname="de.adshield.core.AdvancedAliasTest" time="0.0"/>
+  <testcase name="dnameDoesNotRenameItsExactOwner" classname="de.adshield.core.AdvancedAliasTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+</testsuite>

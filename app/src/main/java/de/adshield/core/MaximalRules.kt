@@ -48,16 +48,22 @@ api.ad.xiaomi.com
 data.mistat.xiaomi.com
 data.mistat.india.xiaomi.com
 """.trimIndent().lineSequence().map(Domains::normalize).toSet()
-    fun parse(text: String, minimum: Int = 50000): Set<String> {
-        require(text.toByteArray(Charsets.UTF_8).size <= HostsParser.MAX_BYTES) { "Zusatzfilter zu groß" }
-        require(text.startsWith("# Title: HaGeZi's Multi ULTIMATE") && text.contains("# Syntax: Domains")) { "Unbekanntes Zusatzfilterformat" }
-        val expected = Regex("(?m)^# Number of entries: ([0-9]+)\\r?$").find(text)?.groupValues?.get(1)?.toIntOrNull()
-        require(expected != null && expected in minimum..600000) { "Ungültige Anzahl im Zusatzfilter" }
-        val lines = text.lineSequence().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }.toList()
-        val parsed = lines.map(Domains::normalize).toSet()
-        require(lines.size == expected && parsed.size == expected) { "Zusatzfilter unvollständig; bisherige Listen bleiben aktiv" }
-        return parsed
+    fun parse(text:String,minimum:Int=50000):Set<String>{
+        require(text.toByteArray(Charsets.UTF_8).size<=HostsParser.MAX_BYTES){"Zusatzfilter zu groß"}
+        return parse(text.reader(),minimum)
+    }
+    fun parse(reader:java.io.Reader,minimum:Int=50000,check:()->Unit={}):Set<String>{
+        val result=HashSet<String>();var count=0;var expected:Int?=null;var syntax=false
+        FilterLines.each(reader,check){raw,index ->
+            if(index==0)require(raw.startsWith("# Title: HaGeZi's Multi ULTIMATE")){"Unbekanntes Zusatzfilterformat"}
+            val line=raw.trim()
+            if(line.startsWith("# Syntax: Domains"))syntax=true
+            if(line.startsWith("# Number of entries:"))expected=line.substringAfter(':').trim().toIntOrNull()
+            if(line.isNotEmpty()&&!line.startsWith("#")){result.add(Domains.normalize(line));count++}
+        }
+        require(syntax && expected!=null && expected!! in minimum..600000 && count==expected && result.size==expected){"Zusatzfilter unvollständig oder ungültig"}
+        return result
     }
     fun effective(base: Set<String>, maximum: Set<String>, enabled: Boolean, additional:Set<String> = emptySet()):Set<String> =
-        if(enabled) HashSet<String>().apply{addAll(base);addAll(maximum);addAll(supplemental);addAll(additional)} else base
+        if(enabled) HashSet<String>(((base.size.toLong()+maximum.size+supplemental.size+additional.size)*4/3+1).coerceAtMost(2000000).toInt()).apply{addAll(base);addAll(maximum);addAll(supplemental);addAll(additional)} else base
 }

@@ -1,0 +1,22 @@
+{
+  "version": "0.1.7",
+  "versionCode": 8,
+  "package": "de.adshield",
+  "apk_bytes": 41371304,
+  "apk_sha256": "5ce21f619c1be81e7f0cd961f02c86224de50163c5323d247dea2d3deb472510",
+  "certificate_sha256": "6ebe07374d1dc00abcc4b230964ebc8412075b8795839c84eb7757fd51816923",
+  "unit_tests": 108,
+  "android29_tests": 15,
+  "android29_seconds": 206.886,
+  "filter_rules": 455868,
+  "android36": "passed final 15/15",
+  "real_phone_test": false,
+  "turtlecute_live_test": false,
+  "android29": "passed final 15/15",
+  "statistics_producer_ms": {
+    "android29": 210,
+    "android36": 1695
+  },
+  "android36_tests": 15,
+  "android36_seconds": 569.552
+}

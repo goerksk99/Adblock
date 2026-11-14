@@ -4,18 +4,20 @@ import java.security.SecureRandom
 
 /** A bounded TCP endpoint for synthetic DNS and explicitly captured resolver addresses. Not a general IP forwarder.
  * In-order receive, duplicate ACKs, segmentation, advertised-window handling, retransmission,
- * length-prefixed DNS messages and orderly half-close. All state is serialized by this object.
+ * length-prefixed DNS messages and orderly half-close. State is serialized; production resolution is dispatched outside the monitor.
  */
 class TcpDnsServer(
     private val resolve: (ByteArray) -> ByteArray,
     private val emit: (ByteArray) -> Unit,
     private val clock: () -> Long = { System.nanoTime() / 1_000_000 },
-    private val initialSequence: () -> Long = { SecureRandom().nextInt().toLong() and MASK }
+    private val initialSequence: () -> Long = { SecureRandom().nextInt().toLong() and MASK },
+    private val dispatch: (((() -> Unit), () -> Unit) -> Unit)? = null,
+    private val unavailable: (ByteArray) -> ByteArray = { DnsResponses.unavailable(it).wire }
 ) {
     private data class Pending(val packet: ByteArray, val end: Long, var sent: Long, var retries: Int=0)
     private data class Session(val packet: IpPacket, var receive: Long, var send: Long, var last: Long,
         var window: Int, val mss:Int=536, var established: Boolean=false, var input: ByteArray=byteArrayOf(),
-        var output: ByteArray=byteArrayOf(), var pending: Pending?=null, var peerClosed:Boolean=false, var finSent:Boolean=false)
+        var output: ByteArray=byteArrayOf(), var pending: Pending?=null, var peerClosed:Boolean=false, var finSent:Boolean=false,var inFlight:Int=0)
     private val sessions=HashMap<String,Session>()
     private fun key(p:IpPacket)="${p.version}:${p.source.joinToString(",")}:${p.sourcePort}:${p.destination.joinToString(",")}"
     @Synchronized fun accept(p:IpPacket) {
@@ -53,9 +55,24 @@ class TcpDnsServer(
                 if(length<12){reset(p);sessions.remove(k);return}
                 if(s.input.size<length+2)break
                 val query=s.input.copyOfRange(2,2+length);s.input=s.input.copyOfRange(length+2,s.input.size)
-                val answer=resolve(query)
-                if(answer.size>65535 || s.output.size+answer.size+2>131074){reset(p);sessions.remove(k);return}
-                val framed=ByteArray(answer.size+2);Wire.put16(framed,0,answer.size);answer.copyInto(framed,2);s.output+=framed
+                if(s.inFlight>=8){reset(p);sessions.remove(k);return}
+                s.inFlight++
+                val session=s
+                fun complete(answer:ByteArray){synchronized(this){
+                    if(sessions[k]!==session)return@synchronized
+                    session.inFlight--
+                    if(answer.size>65535 || session.output.size+answer.size+2>131074){reset(p);sessions.remove(k);return@synchronized}
+                    val framed=ByteArray(answer.size+2);Wire.put16(framed,0,answer.size);answer.copyInto(framed,2);session.output+=framed
+                    flush(session)
+                }}
+                val work={
+                    if(synchronized(this){sessions[k]===session}){
+                        val answer=try{resolve(query)}catch(_:Exception){unavailable(query)}
+                        complete(answer)
+                    }
+                }
+                if(dispatch==null)work() else dispatch.invoke(work,{complete(unavailable(query))})
+
             }
         }
         if(flags and FIN!=0){s.receive=plus(s.receive,1);s.peerClosed=true;acknowledge(s)}
@@ -89,7 +106,7 @@ class TcpDnsServer(
             val length=minOf(s.mss,s.window,s.output.size)
             val data=s.output.copyOfRange(0,length);s.output=s.output.copyOfRange(length,s.output.size)
             send(s,PSH or ACK,data)
-        } else if(s.peerClosed && s.output.isEmpty() && !s.finSent) {s.finSent=true;send(s,FIN or ACK,byteArrayOf())}
+        } else if(s.peerClosed && s.output.isEmpty() && s.inFlight==0 && !s.finSent) {s.finSent=true;send(s,FIN or ACK,byteArrayOf())}
     }
     @Synchronized fun tick() {
         val now=clock();val iterator=sessions.iterator()

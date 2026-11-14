@@ -52,26 +52,29 @@ class FilterEngine {
 object HostsParser {
     const val MAX_BYTES = 8 * 1024 * 1024
     private val whitespace = Regex("\\s+")
-    fun parse(text: String, minimum: Int = 1000): Set<String> {
-        require(text.toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Filterdatei ist zu groß." }
-        require(text.startsWith("#") && text.contains("StevenBlack/hosts")) { "Unbekanntes Filterformat." }
-        val domains = HashSet<String>()
-        var malformed = 0
-        text.lineSequence().forEach { line ->
-            val fields = line.substringBefore('#').trim().split(whitespace)
-            if (fields.firstOrNull() == "0.0.0.0" || fields.firstOrNull() == "127.0.0.1") {
-                fields.drop(1).forEach { field ->
-                    val domain = runCatching { Domains.normalize(field) }.getOrNull()
-                    if (domain != null) domains.add(domain) else if (field !in setOf("localhost", "local", "0.0.0.0", "localhost.localdomain")) malformed++
-                }
+    fun parse(text:String,minimum:Int=1000):Set<String>{
+        require(text.toByteArray(Charsets.UTF_8).size<=MAX_BYTES){"Filterdatei ist zu groß"}
+        return parse(text.reader(),minimum)
+    }
+    fun parse(reader:java.io.Reader,minimum:Int=1000,check:()->Unit={}):Set<String>{
+        val domains=HashSet<String>();var malformed=0;var branded=false;var declared:Int?=null
+        FilterLines.each(reader,check){line,index ->
+            if(index==0)require(line.startsWith("#")){"Unbekanntes Filterformat"}
+            if(line.startsWith("#") && line.contains("StevenBlack/hosts"))branded=true
+            if(line.startsWith("# Number of unique domains:")){
+                declared=line.substringAfter(':').trim().replace(",","").toIntOrNull()
+                require(declared!=null){"Ungültige Filteranzahl"}
+            }
+            val fields=line.substringBefore('#').trim().split(whitespace)
+            if(fields.firstOrNull() in setOf("0.0.0.0","127.0.0.1"))for(field in fields.drop(1)){
+                val domain=runCatching{Domains.normalize(field)}.getOrNull()
+                if(domain!=null)domains.add(domain)
+                else if(field !in setOf("localhost","local","0.0.0.0","localhost.localdomain"))malformed++
             }
         }
-        val declared = Regex("Number of unique domains: ([0-9,]+)").find(text)?.groupValues?.get(1)
-        if (declared != null) {
-            val expected = declared.replace(",", "").toIntOrNull()
-            require(expected != null && expected == domains.size) { "Filterdownload ist unvollständig; bisherige Liste bleibt erhalten." }
-        }
-        require(domains.size >= minimum && malformed <= 100) { "Filter unvollständig oder beschädigt; bisherige Liste bleibt erhalten." }
+        require(branded){"Unbekanntes Filterformat"}
+        require(declared==null || declared==domains.size){"Filterdownload ist unvollständig; bisherige Liste bleibt erhalten"}
+        require(domains.size>=minimum && malformed<=100){"Filter unvollständig oder beschädigt; bisherige Liste bleibt erhalten"}
         return domains
     }
 }

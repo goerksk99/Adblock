@@ -56,4 +56,8 @@ class DnsEngineTest {
             e.resolve(query().toWire());assertEquals(2,calls.get())
         }finally{release.countDown();executor.shutdownNow()}
     }
+    @Test fun dnsServfailIsAQueryErrorWithoutPretendingTransportFailed(){
+        val e=DnsEngine(FilterEngine(),{raw ->Message(raw).apply{header.setFlag(Flags.QR.toInt());header.rcode=Rcode.SERVFAIL}.toWire()})
+        val result=e.resolve(query().toWire());assertEquals(Outcome.ERROR,result.outcome);assertFalse(result.transportFailure)
+    }
 }

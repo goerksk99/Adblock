@@ -35,11 +35,15 @@ class StatsRecorder(private val dao:StatsDao,scope:CoroutineScope){
     }}
     fun record(day:String,outcome:Outcome){
         if(failed)return
-        synchronized(pendingLock){
+        val notify=synchronized(pendingLock){
             if(day !in pending && pending.size>=8){error.value="Zu viele Tageswechsel während einer Speicherverzögerung; einige Zähler fehlen.";return}
+            val first=pending.isEmpty()
             val c=pending.getOrPut(day){Counts()};c.total++
             when(outcome){Outcome.BLOCKED->c.blocked++;Outcome.ALLOWED->c.allowed++;Outcome.ERROR->c.errors++}
+            first
         }
-        wake.trySend(Unit)
+        // One wake-up covers the entire pending batch. The writer clears it under
+        // the same lock; the first event in the next batch schedules another wake.
+        if(notify)wake.trySend(Unit)
     }
 }

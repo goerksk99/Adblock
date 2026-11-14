@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.CacheBudgetTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.192Z" hostname="9638f5fdf17b" time="0.002">
+  <properties/>
+  <testcase name="byteBudgetEvictsAndClearReleasesEntries" classname="de.adshield.core.CacheBudgetTest" time="0.001"/>
+  <testcase name="zeroBudgetNeverStoresButStillResolves" classname="de.adshield.core.CacheBudgetTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,3 +1,14 @@
+# 0.1.7 – Alias-Schutz, Speicher und Lastverhalten
+
+- DNAME und HTTPS-/SVCB-AliasMode zusätzlich zu CNAME, maximal 32 Schritte. Anfragegebundene Prüfung mit Erlaubnisvorrang; Schleifen und Widersprüche werden abgelehnt. ServiceMode entfernt nur gesperrte Zielangebote samt betroffenen Hinweisen/Signaturen, ohne legitime Alternativen pauschal zu sperren.
+- DNS-Cache zusätzlich auf geschätzt 4 MiB begrenzt; ungültige Alias-Antworten werden nicht gespeichert. Regeln greifen auch bei bereits gecachten Service-Angeboten.
+- Getrennte, begrenzte UDP-/TCP-Warteschlangen mit Alterung; lokale SERVFAIL-/Reset-Antworten bei Überlast. TCP-Upstream-Auflösung außerhalb der Verbindungssperre; langsame TCP-Abfragen halten andere Verbindungen und UDP nicht auf. Einzelne DNS-Protokollfehler gelten nicht als Transportausfall des gesamten VPN.
+- Filterparser lesen Streams; gemeinsamer komprimierter AtomicFile-Snapshot mit Größen-/Eintragsprüfung und Migration alter JSON-Caches. Keine ZIP-Extraktion. Unveränderte Quellen werden nicht erneut verarbeitet/gespeichert. Updates sind abbrechbar und behalten bei Fehlern die letzte Arbeitsversion. Komprimierte Daten werden blockweise geschrieben.
+- Statistik-Wecksignale einmal je ausstehendem Batch statt bei jedem Ereignis; unveränderte genaue Tageszähler und Löschgenerationen.
+- Schutz vor doppelten manuellen Updates; große Lizenztexte werden abschnittsweise angezeigt.
+- 108 JVM-Tests; zusätzliche Android-Tests für Migration, Abbruch, Speicherausfall, Alias-Paketwege, TCP-Isolation und UDP-Überlast. Plattformresultate in docs/validation/0.1.7/.
+- Listenregeln 455.868, Android-Paketname und Signatur unverändert. Versionscode 8 erlaubt ein Update ohne Deinstallation.
+
 # 0.1.6 – CNAME-Cloaking-Schutz
 
 - CNAME-Ketten werden vom ursprünglichen Abfragenamen aus gegen aktive Sperrregeln geprüft, bis zu 16 Schritte.

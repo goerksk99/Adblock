@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.DnsFailureMessagesTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-14T23:16:41.239Z" hostname="9638f5fdf17b" time="0.006">
+  <properties/>
+  <testcase name="tlsAndTimeoutAreDifferentAndNeverExposeRawExceptionText" classname="de.adshield.core.DnsFailureMessagesTest" time="0.005"/>
+  <testcase name="servfailRetainsTransportCauseForStartupDiagnostic" classname="de.adshield.core.DnsFailureMessagesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

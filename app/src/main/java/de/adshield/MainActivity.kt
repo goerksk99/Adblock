@@ -188,11 +188,11 @@ class MainActivity:ComponentActivity(){
 @Composable private fun SettingsScreen(settings:de.adshield.data.Settings,filter:FilterInfo,update:()->Unit,interval:(Long)->Unit,theme:(String)->Unit,maximal:(Boolean)->Unit,dnsGuard:(Boolean)->Unit,diagnostic:String,diagnosing:Boolean,diagnose:()->Unit,vpnSettings:()->Unit){
     LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)){
         item{PageTitle("Einstellungen","Privat. Lokal. Ohne Konto.")}
-        item{ListItem(headlineContent={Text("Maximaler Schutz")},supportingContent={Text("HaGeZi Ultimate + OISD Big + Trackingregeln und CNAME-Prüfung. Kann App-Funktionen einschränken. Erlaubte Domains haben Vorrang.")},trailingContent={Switch(checked=settings.maximal,onCheckedChange=maximal)})}
+        item{ListItem(headlineContent={Text("Maximaler Schutz")},supportingContent={Text("HaGeZi Ultimate + OISD Big + Trackingregeln und DNS-Alias-Prüfung. Kann App-Funktionen einschränken. Erlaubte Domains haben Vorrang.")},trailingContent={Switch(checked=settings.maximal,onCheckedChange=maximal)})}
         item{ListItem(headlineContent={Text("Bekannte DNS-Umgehungen einschränken")},supportingContent={Text("Im Maximalmodus: feste öffentliche DNS-Adressen filtern und bekannte verschlüsselte Resolver-Ziele sperren. Striktes Browser-DNS kann dann ausfallen; bei Bedarf hier ausschalten. Unbekannte Resolver bleiben möglich.")},trailingContent={Switch(checked=settings.dnsGuard,onCheckedChange=dnsGuard,enabled=settings.maximal)})}
         item{InfoCard("Schutztest auf diesem Gerät",diagnostic)}
         item{Button(onClick=diagnose,enabled=!diagnosing){Text(if(diagnosing)"DNS-Pfad wird geprüft …" else "Schutz jetzt prüfen")}}
-        item{InfoCard("Filterquellen: StevenBlack + HaGeZi Ultimate + OISD Big","Standardmodus: StevenBlack. Maximalmodus: zusätzlich HaGeZi Ultimate, OISD Big und gezielte Tracking-Sperren. MIT/GPL-3.0 und Bedingungen einzelner Quelllisten. Quellen und Hinweise liegen in der App unter Lizenzen.\n${filter.count} eindeutige Domains\n${if(filter.bundled)"Vorinstallierte Stände: StevenBlack 08.11., HaGeZi/OISD 14.11.2026" else "Aktualisiert: "+date(filter.updated)}\nSHA-256: ${filter.digest.take(16)}…")}
+        item{InfoCard("Filterquellen: StevenBlack + HaGeZi Ultimate + OISD Big","Standardmodus: StevenBlack. Maximalmodus: zusätzlich HaGeZi Ultimate, OISD Big und gezielte Tracking-Sperren. MIT/GPL-3.0 und Bedingungen einzelner Quelllisten. Quellen und Hinweise liegen in der App unter Lizenzen.\n${filter.count} eindeutige Domains\n${if(filter.bundled)"Vorinstallierte Stände: StevenBlack 08.11., HaGeZi/OISD 14.11.2026" else "Aktualisiert: "+date(filter.updated)}\nQuelllisten-Fingerprint (SHA-256): ${filter.digest.take(16)}…")}
         item{Button(onClick=update,enabled=!filter.updating){Text(if(filter.updating)"Wird geprüft …" else "Filter jetzt aktualisieren")}}
         if(settings.updateError.isNotEmpty())item{Text(settings.updateError,color=MaterialTheme.colorScheme.error)}
         item{Text("Automatische Filterupdates",fontWeight=FontWeight.SemiBold);FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)){listOf(0L,24L,48L,168L).forEach{h ->FilterChip(settings.updateHours==h,{interval(h)},label={Text(if(h==0L)"Aus" else "$h Stunden")})}}}
@@ -203,16 +203,17 @@ class MainActivity:ComponentActivity(){
         item{InfoCard("Private DNS und Browser","Android Private DNS, Chrome Secure DNS und eigene verschlüsselte Resolver anderer Apps können lokale DNS-Filter umgehen oder Konflikte auslösen. Prüfe diese Einstellungen manuell, falls keine Anfragen gezählt werden. Keine pauschale Abschaltung sicherer Verbindungen nötig. Im Maximalmodus werden mit aktivem Umgehungsschutz ausgewählte feste Resolver-Adressen erfasst. Unbekannte Ziele, eigene Resolver und feste Inhalts-IP-Adressen können den Schutz weiter umgehen. Es ist nur ein regulärer Android-VPN-Dienst gleichzeitig möglich.")}
         item{InfoCard("Datenschutz","Keine Konten, Werbung, Telemetrie oder Domainhistorie. Nur aggregierte Tageszähler werden lokal für bis zu 90 Tage gespeichert. Keine app-spezifischen DNS-Statistiken. Ausgehende Verbindungen: Quad9 für DNS und raw.githubusercontent.com für Filterupdates. Updates verraten dem Listenanbieter deine IP-Adresse. Einstellungen und Regeln bleiben auf dem Gerät; Android-Backups sind deaktiviert.")}
         item{LicenseCard()}
-        item{InfoCard("AdShield 0.1.6 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
+        item{InfoCard("AdShield 0.1.7 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
     }
 }
 @Composable private fun LicenseCard(){
     val context=androidx.compose.ui.platform.LocalContext.current
     var show by remember{mutableStateOf(false)}
     var text by remember{mutableStateOf("")}
-    LaunchedEffect(show){if(show)text=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){context.assets.open("LICENSES.txt").bufferedReader().use{it.readText()}}}
+    LaunchedEffect(show){if(show)text=kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO){runCatching{context.assets.open("LICENSES.txt").bufferedReader().use{it.readText()}}.getOrDefault("Lizenzhinweise konnten nicht geladen werden. Sie liegen auch im Quellprojekt.")}}
     OutlinedButton(onClick={show=true}){Text("Lizenzen und Filterquellen")}
-    if(show)AlertDialog(onDismissRequest={show=false},title={Text("Lizenzen")},text={LazyColumn(Modifier.heightIn(max=420.dp)){item{Text(text,style=MaterialTheme.typography.bodySmall)}}},confirmButton={TextButton(onClick={show=false}){Text("Schließen")}})
+    val licenseChunks=remember(text){text.chunked(2500)}
+    if(show)AlertDialog(onDismissRequest={show=false},title={Text("Lizenzen")},text={LazyColumn(Modifier.heightIn(max=420.dp)){items(licenseChunks){chunk ->Text(chunk,style=MaterialTheme.typography.bodySmall)}}},confirmButton={TextButton(onClick={show=false}){Text("Schließen")}})
 }
 private fun percent(part:Long,total:Long)=if(total==0L)"0 %" else "%.1f %%".format(100.0*part/total)
 private fun date(value:Long)=DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT).format(Date(value))

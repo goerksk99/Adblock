@@ -8,7 +8,7 @@ Der voreingestellte aggressive HaGeZi-Ultimate-Modus kann Webseiten und App-Funk
 
 # Grenzen und offene Validierung
 
-AdShield 0.1.1 ist eine **Entwicklungsversion**. Eine gebaute APK und Protokolltests ersetzen keine Prüfung des realen VPN-Paketwegs auf deinem Smartphone. Vor dauerhafter Nutzung bitte die Checkliste in TESTING.md durchgehen.
+AdShield 0.1.7 ist eine **Entwicklungsversion**. Eine gebaute APK und Protokolltests ersetzen keine Prüfung des realen VPN-Paketwegs auf deinem Smartphone. Vor dauerhafter Nutzung bitte die Checkliste in TESTING.md durchgehen.
 
 * DNS-Filter können bekannte Werbe-/Tracking-/Bedrohungsdomains sperren, aber keine beliebigen Seitenelemente entfernen oder jeden Pop-up-/Weiterleitungsmechanismus unterbinden. Seiten können bereits erlaubte Domains für störende Aktionen verwenden.
 * Werbung und Inhalt unter derselben Domain können nicht zuverlässig getrennt werden. Keine Garantie für YouTube, Instagram oder TikTok. Das Sperren einer gemeinsamen Domain würde oft den Inhalt beschädigen.
@@ -21,7 +21,15 @@ AdShield 0.1.1 ist eine **Entwicklungsversion**. Eine gebaute APK und Protokollt
 * Fragment-Reassemblierung ist auf 64 Datengramme, insgesamt 1 MiB und fünf Sekunden begrenzt; überlappende, beschädigte oder übergroße Fragmente werden aus Sicherheitsgründen verworfen. ESP und unbekannte Transportprotokolle auf den beiden synthetischen DNS-Adressen werden nicht weitergeleitet. EDNS-Antwortgrenze 1232 Bytes reduziert ausgehende Fragmentierung. Das ist kein universeller IP-Stack.
 * Eigener begrenzter TCP-DNS-Endpunkt: kein extern auditiertes Netzwerkprodukt. Seltene TCP-Optionen, sehr lange Transfers, Paketlast, alle Gerätevarianten und aggressives Pipelining benötigen weitere Tests. Idle-Verbindungen werden nach 30 Sekunden verworfen, maximal 128 gleichzeitig.
 * Die Statistik wird kurz gebündelt geschrieben. Ein harter Prozessabbruch kann noch nicht gespeicherte Ereignisse verlieren; bereits gespeicherte Tageszähler bleiben erhalten. Bei einem Speicherfehler weist die Statistikseite auf unvollständige Zähler hin.
-* Gesamtstatistik umfasst Fehler und erlaubte, eventuell vom Resolver mit NXDOMAIN/SERVFAIL beantwortete Abfragen. „Erlaubt“ bedeutet vom lokalen Filter nicht gesperrt, nicht „Webseite funktioniert“. „Blockierte Anfragen“ sind keine Anzahl verhinderter Anzeigen.
+* Gesamtstatistik umfasst lokale Sperren, Fehler und erlaubte, eventuell vom Resolver mit NXDOMAIN beantwortete Abfragen. Andere DNS-Fehlercodes einschließlich SERVFAIL zählen als Fehler. „Erlaubt“ bedeutet vom lokalen Filter nicht gesperrt, nicht „Webseite funktioniert“. „Blockierte Anfragen“ sind keine Anzahl verhinderter Anzeigen.
 * Hintergrundupdates können von Android, Akkuoptimierung und Netzwerkbedingungen verschoben werden. Samsung/One-UI-Verhalten, WLAN/Mobilfunk, Neustart, Banking und Videoplayer benötigen reale Gerätetests.
 * Keine Garantie für Malware-/Phishing-Schutz. Keine eigene TLS-Prüfung des Browserverkehrs. DNS-Anfragen gehen an Quad9; Filterdownloads an GitHub. Beide Anbieter sehen die jeweilige Quell-IP.
 * Debug-APK nur für private Entwicklung. Für längerfristige Nutzung eigener sicher verwahrter Release-Schlüssel erforderlich. Filterdaten enthalten unterschiedliche, teils nichtkommerzielle und Share-Alike-Lizenzen; nicht pauschal als MIT weiterveröffentlichen. Siehe Drittanbieterhinweise.
+
+## Zusätzliche Grenzen 0.1.7
+
+Alias-Schutz benötigt eine sichtbare DNS-Alias-Beziehung und eine passende aktive Sperrregel. Er umfasst CNAME, DNAME und HTTPS-/SVCB-Aliase, aber kein beliebiges Tracking hinter unveränderten Inhaltsdomains. Entfernte ServiceMode-Angebote sind keine vollständig gesperrte Originaldomain; deren legitimer A-/AAAA-Fallback bleibt erlaubt. Roh-IP-Verbindungen, unbekannte Resolver und Browser-Caches können weiterhin außerhalb dieser Prüfung liegen.
+
+Warteschlangen-, Puffer- und Cache-Grenzen erhalten begrenzten Ressourcenverbrauch. Bei außergewöhnlicher Last können einzelne Anfragen SERVFAIL oder TCP-Reset erhalten und einen Neuversuch benötigen. Das ist keine unbegrenzte Lastzusage. Der DNS-Cache verwendet eine konservative Buchhaltung für Einträge, keine exakte Messung des gesamten Prozess-Heaps. 
+
+Abgeschlossene Code- und Emulatorprüfungen belegen keine absolute Perfektion, keine vollständige Werbefreiheit und keine Bewertung von 10/10. Reale Akku-/Langzeitmessungen, Samsung-Hintergrundbetrieb und der tatsächliche Internetpfad auf dem Nutzertelefon bleiben zusätzliche Validierung.

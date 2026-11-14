@@ -38,7 +38,9 @@ class DnsVpnService:VpnService() {
     @Volatile private var upstream:ManagedUpstream?=null
     @Volatile private var engine:DnsEngine?=null
     private var tcp:TcpDnsServer?=null
-    private var pool:ThreadPoolExecutor?=null
+    private var pool:DnsWorkQueue?=null
+    private var tcpPool:DnsWorkQueue?=null
+    private var tcpInputPool:DnsWorkQueue?=null
     @Volatile private var healthJob:Job?=null
     @Volatile private var guardActive=false
     @Volatile private var paused=false
@@ -111,11 +113,20 @@ class DnsVpnService:VpnService() {
         val fd=checkNotNull(builder.establish()){"VPN-Berechtigung fehlt oder wurde widerrufen"};tunnel=fd
         val output=FileOutputStream(fd.fileDescriptor)
         val writeLock=Any()
-        fun emit(bytes:ByteArray){synchronized(writeLock){if(tunnel===fd)output.write(bytes)}}
+        fun emit(bytes:ByteArray){synchronized(writeLock){
+            if(tunnel===fd)try{output.write(bytes)}catch(_:Exception){
+                scope.launch{lifecycle.withLock{if(tunnel===fd && !ending)fail("DNS-Antwort konnte nicht geschrieben werden. Bitte erneut aktivieren.")}}
+            }
+        }}
         val tcpWake=Channel<Unit>(Channel.CONFLATED)
         val fragments=FragmentReassembler()
-        val endpoint=TcpDnsServer(resolve={query -> resolve(dns,query,true).wire},emit=::emit);tcp=endpoint
-        val workers=ThreadPoolExecutor(2,4,30,TimeUnit.SECONDS,ArrayBlockingQueue(128),ThreadPoolExecutor.DiscardPolicy());pool=workers
+        val resolverWorkers=DnsWorkQueue(workers=2,capacity=32,label="TCP-resolve");tcpPool=resolverWorkers
+        val endpoint=TcpDnsServer(resolve={query -> resolve(dns,query,true).wire},emit=::emit,
+            dispatch={work,reject ->resolverWorkers.submit(work,reject)},
+            unavailable={query ->val result=dns.unavailable(query);recordResult(dns,result);result.wire})
+        tcp=endpoint
+        val workers=DnsWorkQueue();pool=workers
+        val streamWorkers=DnsWorkQueue(workers=1,capacity=32,label="TCP-input");tcpInputPool=streamWorkers
         val input=FileInputStream(fd.fileDescriptor);inputStream=input
         reader=scope.launch {
             try {
@@ -128,9 +139,10 @@ class DnsVpnService:VpnService() {
                         val wire = fragments.accept(buffer.copyOf(count)) ?: continue
                         val packet = IpPacket.parse(wire) ?: continue
                         if (packet.destinationPort != 53 || !validDestination(packet)) { continue }
-                        workers.execute {
+                        val queue=if(packet.protocol==17)workers else streamWorkers
+                        queue.submit(work = {
                             try {
-                                if (tunnel !== fd) { return@execute }
+                                if (tunnel !== fd) { return@submit }
                                 if (packet.protocol == 17) {
                                     val query = packet.transport.copyOfRange(8, packet.transport.size)
                                     emit(packet.udpResponse(resolve(dns, query, false).wire))
@@ -147,7 +159,14 @@ class DnsVpnService:VpnService() {
                                     }
                                 }
                             }
-                        }
+                        },expired = {
+                            if(tunnel===fd && !ending)runCatching{
+                                if(packet.protocol==17){
+                                    val result=dns.unavailable(packet.transport.copyOfRange(8,packet.transport.size))
+                                    recordResult(dns,result);emit(packet.udpResponse(result.wire))
+                                }else packet.tcpReset()?.let(::emit)
+                            }
+                        })
                     }
                 }
                 if(tunnel===fd && !ending)lifecycle.withLock{if(tunnel===fd && !ending)fail("Die VPN-Schnittstelle wurde geschlossen.")}
@@ -231,17 +250,20 @@ class DnsVpnService:VpnService() {
     }
     private fun resolve(dns:DnsEngine,query:ByteArray,tcp:Boolean):DnsResult {
         val result=dns.resolve(query,tcp,!paused)
-        if(engine !== dns)return result // Late replies from a replaced tunnel cannot affect its successor.
+        recordResult(dns,result)
+        return result
+    }
+    private fun recordResult(dns:DnsEngine,result:DnsResult){
+        if(engine !== dns)return // Late replies from a replaced tunnel cannot affect its successor.
         val date=LocalDate.now()
         val day=date.toString()
         if(pruneDay.getAndSet(day)!=day)app.scope.launch{app.stats.prune(date.minusDays(90).toString())}
         app.recorder.record(day,result.outcome)
         if(result.transportFailure){
             // During a handover the bounded health check owns the teardown decision.
-            if(healthJob?.isActive==true)return result
+            if(healthJob?.isActive==true)return
             if(failures.incrementAndGet()>=5)scope.launch{lifecycle.withLock{if(tunnel!=null && engine===dns)fail("DNS antwortet wiederholt nicht. VPN wurde getrennt; bei Android-Lockdown kann Internet gesperrt bleiben.")}}
-        }else failures.set(0)
-        return result
+        }else if(result.outcome==Outcome.ALLOWED)failures.set(0)
     }
     private fun publish(stage:Stage,text:String){state.value=ProtectionState(stage,text,isAlwaysOn,isLockdownEnabled);foreground(text)}
     private fun fail(text:String){
@@ -254,7 +276,7 @@ class DnsVpnService:VpnService() {
         val old=tunnel;tunnel=null
         runCatching{inputStream?.close()};inputStream=null
         runCatching{old?.close()};reader?.cancel();reader=null;ticker?.cancel();ticker=null
-        upstream?.close();upstream=null;engine=null;tcp?.close();tcp=null;pool?.shutdownNow();pool=null
+        upstream?.close();upstream=null;engine=null;tcp?.close();tcp=null;pool?.shutdownNow();pool=null;tcpPool?.shutdownNow();tcpPool=null;tcpInputPool?.shutdownNow();tcpInputPool=null
     }
     private fun foreground(text:String){
         val open=PendingIntent.getActivity(this,0,Intent(this,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE)

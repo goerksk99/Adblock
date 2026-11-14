@@ -1,6 +1,6 @@
 # Teststrategie und Galaxy-S25-Prüfung
 
-Stand: 12.11.2026. Resultate gelten nur für ausdrücklich genannte Läufe und Plattformen. Die abschließenden Messergebnisse stehen unten. Das Projekt ist eine Entwicklungsversion; keine Behauptung eines getesteten Galaxy S25.
+Stand: 14.11.2026. Resultate gelten nur für ausdrücklich genannte Läufe und Plattformen. Die abschließenden Messergebnisse stehen unten. Das Projekt ist eine Entwicklungsversion; keine Behauptung eines getesteten Galaxy S25.
 
 ## Automatisierte Prüfungen
 
@@ -127,3 +127,10 @@ Transportfehler bleiben jetzt als Ursache erhalten. Die Oberfläche unterscheide
 ## Aktuell: 0.1.6
 
 82 JVM- und 10 Android-10-Tests bestanden. OISD ergänzt die Abdeckung; CNAME-Antworten werden jetzt gegen aktive Regeln geprüft. Listenregeln: 455.868. Vollständige Nachweise und Grenzen: `docs/validation/0.1.6/README.md`.
+
+
+## Aktuell: 0.1.7
+
+108 JVM-Tests und jeweils alle 15 nativen Tests auf Android 10/API 29 und Android 16/API 36 bestanden; Build und Lint erfolgreich. Neue Tests prüfen DNAME, HTTPS/SVCB, ServiceMode-Alternativen, Alias-Schleifen, Byte-/Cache-Budgets, abgelaufene/abgewiesene Arbeit und unabhängige asynchrone TCP-Verbindungen. Native Tests ergänzen Snapshot-Migration, identische Updates, Update-Abbruch, ungültige Archive, unbrauchbaren Speicher, Alias-Abfragen über alle vier UDP-/TCP-/IP-Varianten, langsame TCP-Verbindungen und UDP-Überlast mit anschließendem Wiederanlauf.
+
+Die endgültigen nativen Plattformresultate sowie frühere abgebrochene Läufe und verbleibende Grenzen stehen in [docs/validation/0.1.7/README.md](docs/validation/0.1.7/README.md). Die Android-16-Aussagen weiter oben beschreiben den historischen Testversuch vor dieser Qualitätsrunde.

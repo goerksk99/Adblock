@@ -1,0 +1,87 @@
+11-14 23:23:08.195  3493  3522 I TestRunner: run started: 15 tests
+11-14 23:23:08.230  3493  3522 I TestRunner: started: invalidZipEntriesNeverExtractAndFallbackToTrustedAssets(de.adshield.FilterLifecycleTest)
+11-14 23:23:18.868  3493  3522 I TestRunner: finished: invalidZipEntriesNeverExtractAndFallbackToTrustedAssets(de.adshield.FilterLifecycleTest)
+11-14 23:23:18.901  3493  3522 I TestRunner: started: cancelledHttpCannotCommitAndCleansStaging(de.adshield.FilterLifecycleTest)
+11-14 23:23:31.273  3493  3522 I TestRunner: finished: cancelledHttpCannotCommitAndCleansStaging(de.adshield.FilterLifecycleTest)
+11-14 23:23:31.341  3493  3522 I TestRunner: started: unavailableStagingStorageReturnsFailureInsteadOfCrashing(de.adshield.FilterLifecycleTest)
+11-14 23:23:43.739  3493  3522 I TestRunner: finished: unavailableStagingStorageReturnsFailureInsteadOfCrashing(de.adshield.FilterLifecycleTest)
+11-14 23:23:43.760  3493  3522 I TestRunner: started: identicalTrustedUpdatesDoNotRewriteArchiveOrReplaceRuleSet(de.adshield.FilterLifecycleTest)
+11-14 23:23:57.231  3493  3522 I TestRunner: finished: identicalTrustedUpdatesDoNotRewriteArchiveOrReplaceRuleSet(de.adshield.FilterLifecycleTest)
+11-14 23:23:57.337  3493  3522 I TestRunner: started: legacyTwoSourceSnapshotMigratesAndZipRestores(de.adshield.FilterLifecycleTest)
+11-14 23:24:23.347  3493  3522 I TestRunner: finished: legacyTwoSourceSnapshotMigratesAndZipRestores(de.adshield.FilterLifecycleTest)
+11-14 23:24:23.398  3493  3522 I TestRunner: started: batchedStatisticsAndClearAreConsistent(de.adshield.PersistenceTest)
+11-14 23:24:24.780  3493  3522 I TestRunner: finished: batchedStatisticsAndClearAreConsistent(de.adshield.PersistenceTest)
+11-14 23:24:24.836  3493  3522 I TestRunner: started: slowDatabaseNeverBackpressuresDnsAndCountersRemainExact(de.adshield.PersistenceTest)
+11-14 23:24:25.348  3493  3522 I System.out: STATS_STALL records=20000 producer_ms=210
+11-14 23:24:26.022  3493  3522 I TestRunner: finished: slowDatabaseNeverBackpressuresDnsAndCountersRemainExact(de.adshield.PersistenceTest)
+11-14 23:24:26.043  3493  3522 I TestRunner: started: invalidAndEmptyUpdatesRetainLastWorkingFile(de.adshield.PersistenceTest)
+11-14 23:25:55.593  3493  3522 I TestRunner: finished: invalidAndEmptyUpdatesRetainLastWorkingFile(de.adshield.PersistenceTest)
+11-14 23:25:55.630  3493  3522 I TestRunner: started: settingsPersistRulesAndAppExclusions(de.adshield.PersistenceTest)
+11-14 23:25:56.435  3493  3522 I TestRunner: finished: settingsPersistRulesAndAppExclusions(de.adshield.PersistenceTest)
+11-14 23:25:56.466  3493  3522 I TestRunner: started: bundledFilterIsUsableAndMatchesKnownAdDomain(de.adshield.PersistenceTest)
+11-14 23:25:56.722  3493  3522 I TestRunner: finished: bundledFilterIsUsableAndMatchesKnownAdDomain(de.adshield.PersistenceTest)
+11-14 23:25:56.750  3493  3522 I TestRunner: started: statisticsAggregateWithoutDoubleCountingAndPersist(de.adshield.PersistenceTest)
+11-14 23:25:57.566  3493  3522 I TestRunner: finished: statisticsAggregateWithoutDoubleCountingAndPersist(de.adshield.PersistenceTest)
+11-14 23:25:57.586  3493  3522 I TestRunner: started: protectedWildcardSocketAlsoConnectsOverIpv6(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:58.381  3493  3522 I TestRunner: finished: protectedWildcardSocketAlsoConnectsOverIpv6(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:58.415  3493  3522 I TestRunner: started: socketCanBeProtectedBeforeVpnEstablishment(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:58.759  3493  3522 I System.out: LEGACY_UNBOUND_SOCKET_PROTECTED=false bound=false
+11-14 23:25:58.785  3493  3522 I System.out: BOUND_SOCKET_PROTECTED_BEFORE_VPN=true
+11-14 23:25:58.787  3493  3522 I TestRunner: finished: socketCanBeProtectedBeforeVpnEstablishment(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:58.817  3493  3522 I TestRunner: started: protectedSocketConnectsAndTransfersDataOnAndroid(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:59.315  3493  3522 I TestRunner: finished: protectedSocketConnectsAndTransfersDataOnAndroid(de.adshield.ProtectedSocketAndroidTest)
+11-14 23:25:59.337  3493  3522 I TestRunner: started: realTunIpv4Ipv6UdpTcpRoutesAndShutdown(de.adshield.VpnPacketPathTest)
+11-14 23:26:02.266  3493  3521 I System.out: TUN_INPUT bytes=76 version=6 parsed=false
+11-14 23:26:02.268  3493  3521 I System.out: TUN_INPUT bytes=76 version=6 parsed=false
+11-14 23:26:02.269  3493  3521 I System.out: TUN_INPUT bytes=48 version=6 parsed=false
+11-14 23:26:02.270  3493  3521 I System.out: TUN_INPUT bytes=96 version=6 parsed=false
+11-14 23:26:02.362  3493  3521 I System.out: TUN_INPUT bytes=96 version=6 parsed=false
+11-14 23:26:02.387  3493  3521 I System.out: TUN_INPUT bytes=96 version=6 parsed=false
+11-14 23:26:02.703  3493  3521 I System.out: TUN_INPUT bytes=64 version=4 parsed=true
+11-14 23:26:02.711  3493  3522 I System.out: VPN_LINKS {InterfaceName: tun0 LinkAddresses: [ 10.111.0.1/32,fdad:51e1:d::1/128 ] DnsAddresses: [ /10.111.0.2,/fdad:51e1:d::2 ] Domains:  MTU: 0 Routes: [ 10.111.0.2/32 -> 0.0.0.0 tun0,fdad:51e1:d::2/128 -> :: tun0,1.1.1.1/32 -> 0.0.0.0 tun0,1.0.0.1/32 -> 0.0.0.0 tun0,8.8.8.8/32 -> 0.0.0.0 tun0,8.8.4.4/32 -> 0.0.0.0 tun0,9.9.9.9/32 -> 0.0.0.0 tun0,149.112.112.112/32 -> 0.0.0.0 tun0,94.140.14.14/32 -> 0.0.0.0 tun0,94.140.15.15/32 -> 0.0.0.0 tun0,208.67.222.222/32 -> 0.0.0.0 tun0,208.67.220.220/32 -> 0.0.0.0 tun0,2606:4700:4700::1111/128 -> :: tun0,2606:4700:4700::1001/128 -> :: tun0,2001:4860:4860::8888/128 -> :: tun0,2001:4860:4860::8844/128 -> :: tun0,2620:fe::fe/128 -> :: tun0,2620:fe::9/128 -> :: tun0,2a10:50c0::ad1:ff/128 -> :: tun0,2a10:50c0::ad2:ff/128 -> :: tun0,2620:119:35::35/128 -> :: tun0,2620:119:53::53/128 -> :: tun0,10.111.0.1/32 -> 0.0.0.0 tun0,fdad:51e1:d::1/128 -> :: tun0 ]}
+11-14 23:26:02.775  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=33591
+11-14 23:26:02.778  3493  3521 I System.out: TUN_INPUT bytes=57 version=4 parsed=true
+11-14 23:26:02.946  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=52252
+11-14 23:26:02.959  3493  3521 I System.out: TUN_INPUT bytes=61 version=4 parsed=true
+11-14 23:26:03.065  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=54208
+11-14 23:26:03.067  3493  3521 I System.out: TUN_INPUT bytes=73 version=4 parsed=true
+11-14 23:26:03.466  3493  3521 I System.out: TUN_INPUT bytes=60 version=4 parsed=true
+11-14 23:26:03.531  3493  3521 I System.out: TUN_INPUT bytes=40 version=4 parsed=true
+11-14 23:26:03.813  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=57761
+11-14 23:26:04.183  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=55509
+11-14 23:26:04.626  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=54717
+11-14 23:26:05.009  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=53621
+11-14 23:26:05.217  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=38871
+11-14 23:26:05.307  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=42012
+11-14 23:26:05.482  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=58033
+11-14 23:26:05.689  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=48231
+11-14 23:26:05.846  3493  3522 I System.out: UDP_ROUTE destination=fdad:51e1:d::2 source=fdad:51e1:d::1 port=59567
+11-14 23:26:06.251  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=42674
+11-14 23:26:06.367  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=41599
+11-14 23:26:06.467  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=36365
+11-14 23:26:06.601  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=36721
+11-14 23:26:06.703  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=36493
+11-14 23:26:06.938  3493  3522 I System.out: UDP_ROUTE destination=8.8.8.8 source=10.111.0.1 port=49829
+11-14 23:26:07.362  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=60402
+11-14 23:26:07.451  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=36301
+11-14 23:26:07.520  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=49243
+11-14 23:26:07.770  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=35462
+11-14 23:26:08.168  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=47704
+11-14 23:26:08.368  3493  3522 I System.out: UDP_ROUTE destination=2001:4860:4860::8888 source=fdad:51e1:d::1 port=43849
+11-14 23:26:09.257  3493  3522 I System.out: IN_APP_DIAGNOSTIC_PASSED
+11-14 23:26:10.489  3493  3522 I System.out: CAPTURED_RESOLVER_NON_DNS_DROPPED
+11-14 23:26:10.853  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=42947
+11-14 23:26:10.981  3493  3522 I System.out: UDP_SURVIVES_STALLED_TCP
+11-14 23:26:11.430  3493  3522 I System.out: UDP_OVERLOAD_RETURNS_SERVFAIL_WITHOUT_VPN_FAILURE
+11-14 23:26:11.479  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=34503
+11-14 23:26:12.547  3493  3522 I System.out: NON_DNS_SOURCE 10.0.2.16
+11-14 23:26:12.652  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=60631
+11-14 23:26:12.763  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=50676
+11-14 23:26:12.805  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=50865
+11-14 23:26:12.850  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=33492
+11-14 23:26:12.882  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=40942
+11-14 23:26:12.905  3493  3522 I System.out: UDP_ROUTE destination=10.111.0.2 source=10.111.0.1 port=53463
+11-14 23:26:32.939  3493  3522 I System.out: CONTROLLED_FAILURE_VPN_RELEASED
+11-14 23:26:33.891  3493  3522 I System.out: STANDARD_MODE_RESOLVER_ROUTES_REMOVED
+11-14 23:26:35.046  3493  3522 I TestRunner: finished: realTunIpv4Ipv6UdpTcpRoutesAndShutdown(de.adshield.VpnPacketPathTest)
+11-14 23:26:35.081  3493  3522 I TestRunner: run finished: 15 tests, 0 failed, 0 ignored
