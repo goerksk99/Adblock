@@ -27,11 +27,11 @@ class AdShieldApp:Application() {
             try {
                 filters.load()
                 val settings=store.settings.first()
-                engine.replace(RuleSet(if(settings.maximal)filters.combined.value else filters.domains.value,settings.allow,settings.deny))
+                engine.replace(RuleSet(if(settings.maximal)filters.combined.value else filters.domains.value,settings.allow,settings.deny,settings.maximal && settings.dnsGuard))
                 ready.complete(Unit)
             } catch(e:Exception){ready.completeExceptionally(e)}
         }
-        scope.launch {combine(filters.domains,filters.combined,store.settings){hosts,maximum,s -> RuleSet(if(s.maximal)maximum else hosts,s.allow,s.deny)}.collect{engine.replace(it)}}
+        scope.launch {combine(filters.domains,filters.combined,store.settings){hosts,maximum,s -> RuleSet(if(s.maximal)maximum else hosts,s.allow,s.deny,s.maximal && s.dnsGuard)}.collect{engine.replace(it)}}
         scope.launch {store.settings.map{it.updateHours}.distinctUntilChanged().collect{FilterWorker.schedule(this@AdShieldApp,it)}}
         scope.launch(Dispatchers.IO){stats.prune(java.time.LocalDate.now().minusDays(90).toString())}
     }

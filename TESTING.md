@@ -107,3 +107,8 @@ Transportfehler bleiben jetzt als Ursache erhalten. Die Oberfläche unterscheide
 ## Aktuell: 0.1.2
 
 64 JVM- und 9 Android-10-Tests bestanden; Lint und Build erfolgreich. 326.947 Regeln im Maximalmodus; 43/43 gemeldete Domains im lokalen DNS-Regressionstest blockiert. Vollständige Nachweise und Grenzen: `docs/validation/0.1.2/README.md`.
+
+
+## Aktuell: 0.1.3
+
+67 JVM-Tests und 9 Android-10-Tests bestanden. Direkte UDP-/TCP-DNS-Anfragen an festes Google DNS über IPv4 und IPv6 werden durch den lokalen Filter verarbeitet; Standardmodus entfernt die zusätzlichen Routen. Nachweise und Grenzen unter `docs/validation/0.1.3/README.md`.

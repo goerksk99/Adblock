@@ -1,3 +1,7 @@
+## DNS-Umgehungsschutz 0.1.3
+
+Im voreingestellten Maximalmodus können die 20 ausgewählten Resolver-IPs nur noch DNS auf Port 53 über den lokalen Filter verwenden; andere Ports werden dort verworfen. Festes Browser-DoH, DoT oder Android Private DNS kann deshalb ausfallen. Der separate Schalter und der Standardmodus entfernen die zusätzlichen Routen. Hostnamen-Erlaubnisse öffnen keine Resolver-IP-Ports. Unbekannte Resolver und beliebige Inhalts-IP-Adressen bleiben unberührt. Keine allgemeine HTTPS-Entschlüsselung, kein Schutz gegen jede DNS-Umgehung.
+
 ## Maximalmodus 0.1.2
 
 Der voreingestellte aggressive HaGeZi-Ultimate-Modus kann Webseiten und App-Funktionen beeinträchtigen. In Einstellungen lässt er sich ausschalten; Domain-Erlaubnisse haben Vorrang. Die Anzahl gelisteter Domains ist kein Prozentsatz blockierter Werbung. 43 bestandene Screenshot-Testfälle ersetzen keinen Live-Browsertest auf dem Nutzergerät. Die bestehenden DNS-, VPN- und Browser-Grenzen unten gelten weiterhin.

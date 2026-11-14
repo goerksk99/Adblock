@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 
 private val Context.preferences by preferencesDataStore("settings")
-data class Settings(val allow:Set<String> = emptySet(), val deny:Set<String> = emptySet(), val excluded:Set<String> = emptySet(), val enabled:Boolean=false, val updateHours:Long=24, val theme:String="system", val updateError:String="", val maximal:Boolean=true)
+data class Settings(val allow:Set<String> = emptySet(), val deny:Set<String> = emptySet(), val excluded:Set<String> = emptySet(), val enabled:Boolean=false, val updateHours:Long=24, val theme:String="system", val updateError:String="", val maximal:Boolean=true, val dnsGuard:Boolean=true)
 class AppStore(private val context:Context) {
     private val allow=stringSetPreferencesKey("allow"); private val deny=stringSetPreferencesKey("deny")
     private val excluded=stringSetPreferencesKey("excluded"); private val enabled=booleanPreferencesKey("enabled")
@@ -16,7 +16,9 @@ class AppStore(private val context:Context) {
     private val error=stringPreferencesKey("updateError")
     private val maximal=booleanPreferencesKey("maximal")
     suspend fun maximal(value:Boolean){context.preferences.edit{it[maximal]=value}}
-    val settings=context.preferences.data.map { p -> Settings(p[allow]?:emptySet(),p[deny]?:emptySet(),p[excluded]?:emptySet(),p[enabled]?:false,p[hours]?:24,p[theme]?:"system",p[error]?:"",p[maximal]?:true) }
+    private val dnsGuard=booleanPreferencesKey("dnsGuard")
+    suspend fun dnsGuard(value:Boolean){context.preferences.edit{it[dnsGuard]=value}}
+    val settings=context.preferences.data.map { p -> Settings(p[allow]?:emptySet(),p[deny]?:emptySet(),p[excluded]?:emptySet(),p[enabled]?:false,p[hours]?:24,p[theme]?:"system",p[error]?:"",p[maximal]?:true,p[dnsGuard]?:true) }
     suspend fun enabled(value:Boolean){context.preferences.edit{it[enabled]=value}}
     suspend fun rule(domain:String,blocked:Boolean,add:Boolean) {context.preferences.edit{p ->
         val key=if(blocked)deny else allow;val old=p[key]?:emptySet();p[key]=if(add)old+domain else old-domain

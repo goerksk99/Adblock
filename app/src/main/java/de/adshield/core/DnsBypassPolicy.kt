@@ -1,0 +1,12 @@
+package de.adshield.core
+
+import java.net.InetAddress
+
+/** Dedicated public resolver endpoints only. No default routes or shared CDN ranges. */
+object DnsBypassPolicy {
+    val ipv4 = listOf("1.1.1.1","1.0.0.1","8.8.8.8","8.8.4.4","9.9.9.9","149.112.112.112","94.140.14.14","94.140.15.15","208.67.222.222","208.67.220.220")
+    val ipv6 = listOf("2606:4700:4700::1111","2606:4700:4700::1001","2001:4860:4860::8888","2001:4860:4860::8844","2620:fe::fe","2620:fe::9","2a10:50c0::ad1:ff","2a10:50c0::ad2:ff","2620:119:35::35","2620:119:53::53")
+    val names = setOf("dns.google","cloudflare-dns.com","mozilla.cloudflare-dns.com","security.cloudflare-dns.com","family.cloudflare-dns.com","dns.quad9.net","dns.adguard-dns.com","dns.adguard.com","dns.nextdns.io","doh.opendns.com","doh.cleanbrowsing.org","dns.controld.com")
+    private val addresses by lazy { (ipv4+ipv6).map { InetAddress.getByName(it).address } }
+    fun contains(address: ByteArray): Boolean = addresses.any { it.contentEquals(address) }
+}

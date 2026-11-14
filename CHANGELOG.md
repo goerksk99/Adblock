@@ -1,3 +1,11 @@
+# 0.1.3 – bekannte DNS-Umgehungen einschränken
+
+- Zusätzlicher voreingeschalteter, abschaltbarer Schutz im Maximalmodus: 20 exakte öffentliche Resolver-IP-Routen; direkte UDP/TCP-DNS-Anfragen gehen durch den lokalen Filter.
+- Bekannte DoH-/DoT-Hostnamen blockiert. Andere Ports auf erfassten Resolver-IPs werden verworfen. Keine TLS-Entschlüsselung, keine Default-Route und keine geteilten CDN-Netze.
+- AdShields eigene Quad9-Verbindung bleibt über geschützte Sockets unabhängig.
+- Moduswechsel baut den aktiven Tunnel neu auf; Standardmodus und Always-on-Pause erfassen keine zusätzlichen Resolver-Adressen.
+- 326.947 Listenregeln aus 0.1.2 bleiben erhalten. Unbekannte Resolver und Inhaltsdomain-Werbung bleiben Grenzen.
+
 # 0.1.2 – stärkerer DNS-Schutz
 
 - Maximalmodus voreingeschaltet: HaGeZi Ultimate plus gezielte Screenshot-Domains zusätzlich zu StevenBlack; 326.947 eindeutige Domainregeln.

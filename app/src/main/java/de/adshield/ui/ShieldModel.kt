@@ -42,7 +42,9 @@ class ShieldModel(application:Application):AndroidViewModel(application){
         if(protection.value.stage in setOf(Stage.ACTIVE,Stage.PAUSED,Stage.STARTING))service(DnsVpnService.REBUILD)
     }}
     fun update(){viewModelScope.launch{app.ready.await();app.filters.update()}}
-    fun maximal(value:Boolean){viewModelScope.launch{app.store.maximal(value)}}
+    private fun rebuildIfActive(){if(protection.value.stage in setOf(Stage.ACTIVE,Stage.PAUSED,Stage.STARTING))service(DnsVpnService.REBUILD)}
+    fun maximal(value:Boolean){viewModelScope.launch{app.store.maximal(value);rebuildIfActive()}}
+    fun dnsGuard(value:Boolean){viewModelScope.launch{app.store.dnsGuard(value);rebuildIfActive()}}
     fun interval(value:Long){viewModelScope.launch{app.store.interval(value)}}
     fun theme(value:String){viewModelScope.launch{app.store.theme(value)}}
     fun clearStats(){viewModelScope.launch{app.recorder.clear()}}

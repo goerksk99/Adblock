@@ -30,6 +30,7 @@ class VpnPacketPathTest {
         val app=context as AdShieldApp
         withTimeout(180000){app.ready.await()}
         val before=app.store.settings.first()
+        app.store.maximal(true);app.store.dnsGuard(true)
         val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
         val command=automation.executeShellCommand("appops set de.adshield ACTIVATE_VPN allow")
         android.os.ParcelFileDescriptor.AutoCloseInputStream(command).bufferedReader().use{it.readText()}
@@ -74,14 +75,28 @@ class VpnPacketPathTest {
             assertTrue(routes.toString(),"10.111.0.2/32" in routes)
             assertTrue(routes.toString(),routes.any{it.endsWith("/128")&&it.contains("fdad:51e1:d:")})
             assertFalse(routes.toString(),"0.0.0.0/0" in routes || "::/0" in routes)
+            assertTrue(routes.toString(),"8.8.8.8/32" in routes)
+            assertTrue(routes.toString(),routes.size>=22)
+            assertTrue(app.engine.blocked("dns.google"))
             println("VPN_LINKS ${links}")
-            for(address in listOf(DnsVpnService.DNS4,DnsVpnService.DNS6)){
+            for(address in listOf(DnsVpnService.DNS4,DnsVpnService.DNS6,"8.8.8.8","2001:4860:4860::8888")){
                 val allowed=udp(address,"example.com.",Type.A)
                 assertEquals(Rcode.NOERROR,allowed.rcode);assertEquals("192.0.2.7",(allowed.getSection(Section.ANSWER).first() as ARecord).address.hostAddress)
                 assertEquals(Rcode.NXDOMAIN,udp(address,"doubleclick.net.",Type.A).rcode)
                 val v6=tcp(address,"example.com.",Type.AAAA)
                 assertEquals(Rcode.NOERROR,v6.rcode);assertTrue(v6.getSection(Section.ANSWER).first() is AAAARecord)
             }
+            // QUIC/DoH traffic at a captured resolver must be discarded, not sent to the DNS resolver.
+            val beforeEncrypted=received.get()
+            DatagramSocket().use { socket ->
+                vpn.bindSocket(socket);socket.soTimeout=1000
+                val payload=question("encrypted-probe.invalid.",Type.A)
+                socket.send(DatagramPacket(payload,payload.size,InetAddress.getByName("8.8.8.8"),443))
+                try {socket.receive(DatagramPacket(ByteArray(4096),4096));fail("Non-DNS resolver port must not receive DNS replies")}
+                catch(expected:SocketTimeoutException) { /* expected: no forwarding, no answer */ }
+            }
+            assertTrue("Encrypted-port probe must reach TUN",received.get()>beforeEncrypted)
+            println("CAPTURED_RESOLVER_NON_DNS_DROPPED")
             // UDP connect selects a source/route without sending internet traffic.
             DatagramSocket().use{socket ->socket.connect(InetAddress.getByName("192.0.2.99"),443)
                 assertNotEquals(DnsVpnService.CLIENT4,socket.localAddress.hostAddress)
@@ -106,6 +121,23 @@ class VpnPacketPathTest {
             assertTrue(failed.message,failed.message.contains("getrennt"))
             withTimeout(30000){while(cm.allNetworks.any{cm.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_VPN)==true})delay(100)}
             println("CONTROLLED_FAILURE_VPN_RELEASED")
+            // Rebuild without bypass protection: resolver host routes must disappear.
+            unavailable.set(false);app.store.maximal(false);app.store.dnsGuard(false)
+            context.startForegroundService(Intent(context,DnsVpnService::class.java).setAction(DnsVpnService.START))
+            val standard=withTimeout(120000){DnsVpnService.state.first{it.stage==Stage.ACTIVE}}
+            assertEquals(Stage.ACTIVE,standard.stage)
+            withTimeout(30000){
+                while(true){
+                    val standardVpn=cm.allNetworks.firstOrNull{cm.getNetworkCapabilities(it)?.hasTransport(NetworkCapabilities.TRANSPORT_VPN)==true}
+                    val standardRoutes=standardVpn?.let{cm.getLinkProperties(it)?.routes}
+                    if(standardRoutes!=null){
+                        assertFalse(standardRoutes.toString(),standardRoutes.any{it.destination.toString()=="8.8.8.8/32"})
+                        break
+                    }
+                    delay(100)
+                }
+            }
+            println("STANDARD_MODE_RESOLVER_ROUTES_REMOVED")
         }catch(e:Exception){
             println("PACKET_FAILURE received=${received.get()} state=${DnsVpnService.state.value}")
             throw e
@@ -114,6 +146,7 @@ class VpnPacketPathTest {
             withTimeout(30000){DnsVpnService.state.first{it.stage==Stage.OFF || it.stage==Stage.ERROR}}
             app.instrumentationUpstream=null
             app.instrumentationPacketObserver=null
+            app.store.maximal(before.maximal);app.store.dnsGuard(before.dnsGuard)
             app.store.enabled(before.enabled)
             if("doubleclick.net" !in before.allow)app.store.rule("doubleclick.net",false,false)
         }

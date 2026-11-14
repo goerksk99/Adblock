@@ -1,0 +1,14 @@
+{
+  "version": "0.1.3",
+  "versionCode": 4,
+  "unit_tests": 67,
+  "android_tests": 9,
+  "focused_additional_run": 1,
+  "lint": "passed",
+  "dedicated_resolver_routes": 20,
+  "list_rules": 326947,
+  "signature_unchanged": true,
+  "apk_sha256": "417bdbe9c2a1e323ae6c6eb0124839cbdee7498cab7502ab5329ac96213a3827",
+  "phone_verification": "not performed",
+  "unknown_resolvers": "not comprehensively covered"
+}

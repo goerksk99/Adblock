@@ -36,10 +36,10 @@ object Domains {
     }
 }
 
-data class RuleSet(val hosts: Set<String> = emptySet(), val allow: Set<String> = emptySet(), val deny: Set<String> = emptySet()) {
+data class RuleSet(val hosts: Set<String> = emptySet(), val allow: Set<String> = emptySet(), val deny: Set<String> = emptySet(), val resolverGuard: Boolean = false) {
     fun blocked(domain: String): Boolean {
         val name = runCatching { Domains.normalize(domain) }.getOrNull() ?: return false
-        return !Domains.matches(name, allow) && (Domains.matches(name, deny) || Domains.matches(name, hosts))
+        return !Domains.matches(name, allow) && (Domains.matches(name, deny) || Domains.matches(name, hosts) || (resolverGuard && Domains.matches(name, DnsBypassPolicy.names)))
     }
 }
 class FilterEngine {

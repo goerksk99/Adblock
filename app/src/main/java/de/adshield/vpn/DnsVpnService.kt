@@ -40,6 +40,7 @@ class DnsVpnService:VpnService() {
     private var tcp:TcpDnsServer?=null
     private var pool:ThreadPoolExecutor?=null
     private var healthJob:Job?=null
+    @Volatile private var guardActive=false
     @Volatile private var paused=false
     @Volatile private var ending=false
     private val failures=AtomicInteger()
@@ -63,11 +64,11 @@ class DnsVpnService:VpnService() {
                 try {
                     app.ready.await()
                     when(intent?.action){
-                        STOP -> {app.store.enabled(false);if(isAlwaysOn){paused=true;if(tunnel==null)startTunnel() else publish(Stage.PAUSED,"Lokaler Filter pausiert · Quad9-DNS bleibt aktiv")}else{ending=true;release();publish(Stage.OFF,"Schutz deaktiviert");stopForeground(STOP_FOREGROUND_REMOVE);stopSelf()}}
+                        STOP -> {app.store.enabled(false);if(isAlwaysOn){paused=true;startTunnel()}else{ending=true;release();publish(Stage.OFF,"Schutz deaktiviert");stopForeground(STOP_FOREGROUND_REMOVE);stopSelf()}}
                         else -> {
                             if(intent?.action==START)app.store.enabled(true)
                             paused=!app.store.settings.first().enabled
-                            if(tunnel==null || intent?.action==REBUILD)startTunnel()
+                            if(tunnel==null || intent?.action==REBUILD || intent?.action==START)startTunnel()
                             else publish(if(paused)Stage.PAUSED else Stage.ACTIVE,if(paused)"Lokaler Filter pausiert · Quad9-DNS bleibt aktiv" else "Schutz aktiv")
                         }
                     }
@@ -99,8 +100,14 @@ class DnsVpnService:VpnService() {
             .addAddress(CLIENT4,32).addAddress(CLIENT6,128)
             .addRoute(DNS4,32).addRoute(DNS6,128).addDnsServer(DNS4).addDnsServer(DNS6)
             .setConfigureIntent(PendingIntent.getActivity(this,0,Intent(this,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE))
+        guardActive=settings.maximal && settings.dnsGuard && !paused
+        if(guardActive){
+            DnsBypassPolicy.ipv4.forEach { builder.addRoute(it,32) }
+            DnsBypassPolicy.ipv6.forEach { builder.addRoute(it,128) }
+        }
         settings.excluded.filter{it!=packageName}.forEach {pkg -> runCatching{builder.addDisallowedApplication(pkg)}}
-        // Deliberately no 0.0.0.0/0 or ::/0 route. Non-DNS traffic remains outside this TUN.
+        // No default route. At dedicated captured resolver IPs, only port 53 is handled;
+        // encrypted DNS ports are deliberately dropped, never decrypted or forwarded.
         val fd=checkNotNull(builder.establish()){"VPN-Berechtigung fehlt oder wurde widerrufen"};tunnel=fd
         val output=FileOutputStream(fd.fileDescriptor)
         val writeLock=Any()
@@ -214,7 +221,7 @@ class DnsVpnService:VpnService() {
     }
     private fun validDestination(p:IpPacket):Boolean {
         val expected=InetAddress.getByName(if(p.version==4)DNS4 else DNS6).address
-        return p.destination.contentEquals(expected)
+        return p.destination.contentEquals(expected) || (guardActive && DnsBypassPolicy.contains(p.destination))
     }
     private fun resolve(dns:DnsEngine,query:ByteArray,tcp:Boolean):DnsResult {
         val result=dns.resolve(query,tcp,!paused)

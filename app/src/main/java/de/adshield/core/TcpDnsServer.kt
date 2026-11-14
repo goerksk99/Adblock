@@ -2,7 +2,7 @@ package de.adshield.core
 
 import java.security.SecureRandom
 
-/** A bounded TCP endpoint only for the two synthetic DNS addresses. Not a general IP forwarder.
+/** A bounded TCP endpoint for synthetic DNS and explicitly captured resolver addresses. Not a general IP forwarder.
  * In-order receive, duplicate ACKs, segmentation, advertised-window handling, retransmission,
  * length-prefixed DNS messages and orderly half-close. All state is serialized by this object.
  */
