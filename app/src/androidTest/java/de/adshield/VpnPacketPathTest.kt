@@ -42,8 +42,12 @@ class VpnPacketPathTest {
                 return Message(query).apply {
                 header.setFlag(Flags.QR.toInt());header.setFlag(Flags.RA.toInt())
                 val question=question
-                if(question.type==Type.A)addRecord(ARecord(question.name,DClass.IN,60,InetAddress.getByName("192.0.2.7")),Section.ANSWER)
-                else if(question.type==Type.AAAA)addRecord(AAAARecord(question.name,DClass.IN,60,InetAddress.getByName("2001:db8::7")),Section.ANSWER)
+                val owner=if(question.name==Name("adshield-cloak-test.invalid.")) {
+                    addRecord(CNAMERecord(question.name,DClass.IN,60,Name("doubleclick.net.")),Section.ANSWER)
+                    Name("doubleclick.net.")
+                } else question.name
+                if(question.type==Type.A)addRecord(ARecord(owner,DClass.IN,60,InetAddress.getByName("192.0.2.7")),Section.ANSWER)
+                else if(question.type==Type.AAAA)addRecord(AAAARecord(owner,DClass.IN,60,InetAddress.getByName("2001:db8::7")),Section.ANSWER)
             }.toWire()
             }
             override fun networkChanged(){}
@@ -83,6 +87,8 @@ class VpnPacketPathTest {
                 val allowed=udp(address,"example.com.",Type.A)
                 assertEquals(Rcode.NOERROR,allowed.rcode);assertEquals("192.0.2.7",(allowed.getSection(Section.ANSWER).first() as ARecord).address.hostAddress)
                 assertEquals(Rcode.NXDOMAIN,udp(address,"doubleclick.net.",Type.A).rcode)
+                assertEquals(Rcode.NXDOMAIN,udp(address,"adshield-cloak-test.invalid.",Type.A).rcode)
+                assertEquals(Rcode.NXDOMAIN,tcp(address,"adshield-cloak-test.invalid.",Type.AAAA).rcode)
                 val v6=tcp(address,"example.com.",Type.AAAA)
                 assertEquals(Rcode.NOERROR,v6.rcode);assertTrue(v6.getSection(Section.ANSWER).first() is AAAARecord)
             }

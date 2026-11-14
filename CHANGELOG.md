@@ -1,3 +1,10 @@
+# 0.1.6 – CNAME-Cloaking-Schutz
+
+- CNAME-Ketten werden vom ursprünglichen Abfragenamen aus gegen aktive Sperrregeln geprüft, bis zu 16 Schritte.
+- Zeigt eine Alias-Kette auf einen gesperrten Tracker, wird die ursprüngliche Anfrage lokal blockiert.
+- Erlaubnisregeln behalten Vorrang; fremde Antwortnamen verursachen keine Sperre. Cache-Antworten werden bei Regeländerungen erneut geprüft. Pausierter Schutz bleibt durchlässig.
+- 455.868 Listenregeln und die zusätzliche OISD-Abdeckung aus 0.1.5 bleiben erhalten.
+
 # 0.1.5 – zusätzliche Domain-Abdeckung
 
 - OISD Big zusätzlich im Maximalmodus: insgesamt 455.868 eindeutige Listenregeln; 121.559 OISD-Domains waren vorher auch durch keine Elternregel erfasst.

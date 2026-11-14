@@ -122,3 +122,8 @@ Transportfehler bleiben jetzt als Ursache erhalten. Die Oberfläche unterscheide
 ## Aktuell: 0.1.5
 
 76 JVM- und 10 Android-10-Tests bestanden. 455.868 eindeutige Listenregeln, 121.559 erstmals abgedeckte OISD-Domains. Nachweise und Abgrenzung zur sichtbaren Werbequote: `docs/validation/0.1.5/README.md`.
+
+
+## Aktuell: 0.1.6
+
+82 JVM- und 10 Android-10-Tests bestanden. OISD ergänzt die Abdeckung; CNAME-Antworten werden jetzt gegen aktive Regeln geprüft. Listenregeln: 455.868. Vollständige Nachweise und Grenzen: `docs/validation/0.1.6/README.md`.

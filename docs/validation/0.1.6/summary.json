@@ -1,0 +1,15 @@
+{
+  "version": "0.1.6",
+  "versionCode": 7,
+  "unit_tests": 82,
+  "android_api29_tests": 10,
+  "lint": "passed",
+  "effective_list_rules": 455868,
+  "newly_covered_oisd_domains": 121559,
+  "cname_chain_checks": true,
+  "cname_max_steps": 16,
+  "explicit_allows_override_alias_checks": true,
+  "signature_unchanged": true,
+  "apk_sha256": "f26ecfd5eda0935ca2e5c0602855912c29084a5fbfd09811ad7901b6b4026ef9",
+  "live_browser_score": "not measured"
+}

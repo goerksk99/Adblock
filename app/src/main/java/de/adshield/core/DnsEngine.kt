@@ -24,9 +24,7 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
             return DnsResult(error(query, Rcode.REFUSED).toWire(), Outcome.ERROR)
         val udpSize = (query.opt?.payloadSize ?: 512).coerceIn(512, 1232)
         if (filtering && filter.blocked(question.name.toString())) {
-            val response = error(query, Rcode.NXDOMAIN)
-            response.addRecord(SOARecord(question.name, DClass.IN, 60, Name("blocked.invalid."), Name("hostmaster.blocked.invalid."), 1, 60, 60, 60, 60), Section.AUTHORITY)
-            return DnsResult(response.toWire(if (tcp) 65535 else udpSize), Outcome.BLOCKED)
+            return blocked(query,tcp,udpSize)
         }
         return try {
             val normalized = query.clone().apply { header.id = 0 }
@@ -62,9 +60,30 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
                     if (ttl > 0) synchronized(this) { if(cacheGeneration == snapshot.first)cache[key] = Entry(raw, now, ttl.coerceAtMost(300)) }
                 }
             }
+            // Recheck raw/cached aliases against current rules on every request.
+            // Only follow the chain rooted in this question; unrelated answer names cannot block it.
+            if(filtering && !filter.allowed(question.name.toString()) && blockedAlias(question.name,response))
+                return blocked(query,tcp,udpSize)
             response.header.id = query.header.id
             DnsResult(response.toWire(if (tcp) 65535 else udpSize), Outcome.ALLOWED)
         } catch (error: Exception) { DnsResult(error(query, Rcode.SERVFAIL).toWire(), Outcome.ERROR, true, error) }
+    }
+    private fun blockedAlias(start:Name,response:Message):Boolean {
+        val aliases=response.getSection(Section.ANSWER).filterIsInstance<CNAMERecord>().associateBy{it.name}
+        var current=start
+        val seen=HashSet<Name>()
+        repeat(16){
+            if(!seen.add(current))return false
+            val target=aliases[current]?.target?:return false
+            if(filter.blocked(target.toString()))return true
+            current=target
+        }
+        return false
+    }
+    private fun blocked(query:Message,tcp:Boolean,udpSize:Int):DnsResult {
+        val response=error(query,Rcode.NXDOMAIN)
+        response.addRecord(SOARecord(query.question.name,DClass.IN,60,Name("blocked.invalid."),Name("hostmaster.blocked.invalid."),1,60,60,60,60),Section.AUTHORITY)
+        return DnsResult(response.toWire(if(tcp)65535 else udpSize),Outcome.BLOCKED)
     }
     private fun error(query: Message, code: Int) = Message(query.header.id).apply {
         header.setFlag(Flags.QR.toInt()); header.setFlag(Flags.RA.toInt())

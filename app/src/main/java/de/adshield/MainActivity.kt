@@ -188,7 +188,7 @@ class MainActivity:ComponentActivity(){
 @Composable private fun SettingsScreen(settings:de.adshield.data.Settings,filter:FilterInfo,update:()->Unit,interval:(Long)->Unit,theme:(String)->Unit,maximal:(Boolean)->Unit,dnsGuard:(Boolean)->Unit,diagnostic:String,diagnosing:Boolean,diagnose:()->Unit,vpnSettings:()->Unit){
     LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)){
         item{PageTitle("Einstellungen","Privat. Lokal. Ohne Konto.")}
-        item{ListItem(headlineContent={Text("Maximaler Schutz")},supportingContent={Text("HaGeZi Ultimate + OISD Big + zusätzliche Trackingregeln. Kann App-Funktionen einschränken. Erlaubte Domains haben Vorrang.")},trailingContent={Switch(checked=settings.maximal,onCheckedChange=maximal)})}
+        item{ListItem(headlineContent={Text("Maximaler Schutz")},supportingContent={Text("HaGeZi Ultimate + OISD Big + Trackingregeln und CNAME-Prüfung. Kann App-Funktionen einschränken. Erlaubte Domains haben Vorrang.")},trailingContent={Switch(checked=settings.maximal,onCheckedChange=maximal)})}
         item{ListItem(headlineContent={Text("Bekannte DNS-Umgehungen einschränken")},supportingContent={Text("Im Maximalmodus: feste öffentliche DNS-Adressen filtern und bekannte verschlüsselte Resolver-Ziele sperren. Striktes Browser-DNS kann dann ausfallen; bei Bedarf hier ausschalten. Unbekannte Resolver bleiben möglich.")},trailingContent={Switch(checked=settings.dnsGuard,onCheckedChange=dnsGuard,enabled=settings.maximal)})}
         item{InfoCard("Schutztest auf diesem Gerät",diagnostic)}
         item{Button(onClick=diagnose,enabled=!diagnosing){Text(if(diagnosing)"DNS-Pfad wird geprüft …" else "Schutz jetzt prüfen")}}
@@ -203,7 +203,7 @@ class MainActivity:ComponentActivity(){
         item{InfoCard("Private DNS und Browser","Android Private DNS, Chrome Secure DNS und eigene verschlüsselte Resolver anderer Apps können lokale DNS-Filter umgehen oder Konflikte auslösen. Prüfe diese Einstellungen manuell, falls keine Anfragen gezählt werden. Keine pauschale Abschaltung sicherer Verbindungen nötig. Im Maximalmodus werden mit aktivem Umgehungsschutz ausgewählte feste Resolver-Adressen erfasst. Unbekannte Ziele, eigene Resolver und feste Inhalts-IP-Adressen können den Schutz weiter umgehen. Es ist nur ein regulärer Android-VPN-Dienst gleichzeitig möglich.")}
         item{InfoCard("Datenschutz","Keine Konten, Werbung, Telemetrie oder Domainhistorie. Nur aggregierte Tageszähler werden lokal für bis zu 90 Tage gespeichert. Keine app-spezifischen DNS-Statistiken. Ausgehende Verbindungen: Quad9 für DNS und raw.githubusercontent.com für Filterupdates. Updates verraten dem Listenanbieter deine IP-Adresse. Einstellungen und Regeln bleiben auf dem Gerät; Android-Backups sind deaktiviert.")}
         item{LicenseCard()}
-        item{InfoCard("AdShield 0.1.5 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
+        item{InfoCard("AdShield 0.1.6 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
     }
 }
 @Composable private fun LicenseCard(){

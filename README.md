@@ -1,12 +1,12 @@
 # AdShield – Downloads
 
-Native Android-Entwicklungsfassung 0.1.5 für die private Nutzung.
+Native Android-Entwicklungsfassung 0.1.6 für die private Nutzung.
 
 - [APK herunterladen](https://github.com/goerksk99/Adblock/raw/refs/heads/main/downloads/AdShield-debug.apk)
 - [Vollständiges Android-Studio-Projekt herunterladen](https://github.com/goerksk99/Adblock/raw/refs/heads/main/downloads/AdShield-source.zip)
 - [SHA-256-Prüfsummen](downloads/SHA256SUMS)
 
-76 Unit-Tests und 10 Android-10-Integrationstests bestanden. Die Android-VPN-Tests verwenden einen definierten Testresolver; Galaxy-S25-Alltagstests und echter Quad9-Betrieb auf dem Smartphone stehen noch aus. Vollständige Anleitung, Grenzen und Testergebnisse sind im Projektarchiv enthalten.
+82 Unit-Tests und 10 Android-10-Integrationstests bestanden. Die Android-VPN-Tests verwenden einen definierten Testresolver; Galaxy-S25-Alltagstests und echter Quad9-Betrieb auf dem Smartphone stehen noch aus. Vollständige Anleitung, Grenzen und Testergebnisse sind im Projektarchiv enthalten.
 
 APK aufs Smartphone übertragen, öffnen und die Installation für die verwendete Datei-App gezielt erlauben. AdShield starten und Androids VPN-Freigabe bestätigen. „Verbindungen ohne VPN blockieren“ ausgeschaltet lassen.
 
@@ -49,3 +49,9 @@ Aktuelle APK: **0.1.4**, Update ohne Deinstallation mit identischem Zertifikat. 
 Aktuelle APK: **0.1.5**. Der Maximalmodus kombiniert zusätzlich OISD Big mit StevenBlack, HaGeZi Ultimate und gezielten Regeln: **455.868 eindeutige Listenregeln**. 121.559 OISD-Domains waren durch bisherige Listen einschließlich Elternregeln nicht erfasst. Dies umfasst Werbe-, Tracking- und schädliche Domains und ist kein Prozentsatz entfernter sichtbarer Werbung.
 
 Alle drei Quellen werden vor gemeinsamem atomarem Speichern validiert; fehlerhafte OISD-Downloads behalten den bisherigen Stand. Standardmodus und Erlaubnisse bleiben erhalten. 76 JVM- und 10 Android-10-Tests bestanden, Build und Lint erfolgreich. [Nachweise](docs/validation/0.1.5/README.md). APK als Update installieren, Maximalmodus einschalten und Browser neu öffnen. Gleiche Signatur; keine Deinstallation nötig. Technische DNS-Grenzen und Grenzen der unbekannten Resolver bleiben bestehen.
+
+## Android 0.1.6 – größere Abdeckung und CNAME-Prüfung
+
+Aktuelle APK: **0.1.6**. Zusätzlich zu den 455.868 Listenregeln (mit OISD Big) wird die CNAME-Kette einer DNS-Antwort geprüft. Führt sie auf einen nach aktiven Regeln gesperrten Tracker, wird die ursprüngliche Anfrage blockiert. Erlaubte Domains behalten Vorrang; normale CDN-Aliase und fremde Antwortnamen bleiben unberührt. Cache-Antworten werden bei Regeländerungen erneut geprüft. Keine allgemeine Garantie gegen jede Art First-Party-Tracking oder Inhaltswerbung.
+
+82 JVM- und 10 Android-10-Tests bestanden, Build/Lint erfolgreich. [Aktuelle Nachweise](docs/validation/0.1.6/README.md). APK als Update ohne Deinstallation installieren, Maximalmodus einschalten und Browser neu öffnen. Gleiche Signatur; Daten und Ausnahmen bleiben erhalten.

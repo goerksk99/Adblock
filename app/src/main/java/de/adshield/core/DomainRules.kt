@@ -46,6 +46,7 @@ class FilterEngine {
     private val state = AtomicReference(RuleSet())
     fun replace(rules: RuleSet) { state.set(rules) }
     fun blocked(domain: String): Boolean = state.get().blocked(domain)
+    fun allowed(domain:String):Boolean { val name=runCatching{Domains.normalize(domain)}.getOrNull()?:return false;return Domains.matches(name,state.get().allow) }
 }
 
 object HostsParser {
