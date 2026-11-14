@@ -1,0 +1,16 @@
+{
+  "android_version": "0.1.1",
+  "unit_tests": 60,
+  "unit_failures": 0,
+  "android_api29_tests": 9,
+  "android_failures": 0,
+  "lint": "passed",
+  "screenshot_domains": 43,
+  "bundled_blocked": 27,
+  "not_covered": 16,
+  "dns_rule_cases": 129,
+  "explicit_deny_udp_tcp_cases": 258,
+  "actual_quad9_cloud_queries": 2,
+  "phone_test": "not performed",
+  "turtlecute_live_browser": "blocked by cloud network policy"
+}

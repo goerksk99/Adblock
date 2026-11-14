@@ -1,0 +1,217 @@
+[
+  {
+    "domain": "freshmarketer.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "claritybt.freshmarketer.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "fwtracks.freshmarketer.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "stats.wp.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "stats.wp.com"
+  },
+  {
+    "domain": "notify.bugsnag.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "notify.bugsnag.com"
+  },
+  {
+    "domain": "sessions.bugsnag.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "sessions.bugsnag.com"
+  },
+  {
+    "domain": "api.bugsnag.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "app.bugsnag.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "events.reddit.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "events.redditmedia.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "events.redditmedia.com"
+  },
+  {
+    "domain": "ads-api.tiktok.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "ads-api.tiktok.com"
+  },
+  {
+    "domain": "analytics.tiktok.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "analytics.tiktok.com"
+  },
+  {
+    "domain": "ads-sg.tiktok.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "ads-sg.tiktok.com"
+  },
+  {
+    "domain": "analytics-sg.tiktok.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "analytics-sg.tiktok.com"
+  },
+  {
+    "domain": "business-api.tiktok.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "ads.tiktok.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "ads.tiktok.com"
+  },
+  {
+    "domain": "log.byteoversea.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "ads.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "ads.yahoo.com"
+  },
+  {
+    "domain": "analytics.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "analytics.yahoo.com"
+  },
+  {
+    "domain": "geo.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "geo.yahoo.com"
+  },
+  {
+    "domain": "udcm.yahoo.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "analytics.query.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "analytics.query.yahoo.com"
+  },
+  {
+    "domain": "partnerads.ysm.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "partnerads.ysm.yahoo.com"
+  },
+  {
+    "domain": "log.fc.yahoo.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "gemini.yahoo.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "gemini.yahoo.com"
+  },
+  {
+    "domain": "adtech.yahooinc.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "adtech.yahooinc.com"
+  },
+  {
+    "domain": "auction.unityads.unity3d.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "auction.unityads.unity3d.com"
+  },
+  {
+    "domain": "adserver.unityads.unity3d.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "adserver.unityads.unity3d.com"
+  },
+  {
+    "domain": "extmaps-api.yandex.net",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "appmetrica.yandex.ru",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "adfstat.yandex.ru",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "adfstat.yandex.ru"
+  },
+  {
+    "domain": "metrika.yandex.ru",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "offerwall.yandex.net",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "adfox.yandex.ru",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "adfox.yandex.ru"
+  },
+  {
+    "domain": "iot-eu-logser.realme.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "iot-eu-logser.realme.com"
+  },
+  {
+    "domain": "iot-logser.realme.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "iot-logser.realme.com"
+  },
+  {
+    "domain": "iadsdk.apple.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "iadsdk.apple.com"
+  },
+  {
+    "domain": "metrics.icloud.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "metrics.icloud.com"
+  },
+  {
+    "domain": "metrics.mzstatic.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "metrics.mzstatic.com"
+  },
+  {
+    "domain": "api-adservices.apple.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  },
+  {
+    "domain": "api.ad.xiaomi.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "api.ad.xiaomi.com"
+  },
+  {
+    "domain": "data.mistat.xiaomi.com",
+    "blocked_by_bundled_rules": true,
+    "matching_rule": "data.mistat.xiaomi.com"
+  },
+  {
+    "domain": "data.mistat.india.xiaomi.com",
+    "blocked_by_bundled_rules": false,
+    "matching_rule": null
+  }
+]

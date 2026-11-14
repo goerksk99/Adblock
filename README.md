@@ -21,3 +21,7 @@ Version 0.1.1 korrigiert die Socket-Initialisierung vor Androids VPN-Ausnahme. D
 Systemweiter lokaler DNS-Filter mit SwiftUI, IPv4/IPv6, UDP/TCP, Quad9-DoH, Ausnahmen und Tagesstatistiken. 19 Swift-Tests jeweils in Debug und Release bestanden. **Noch keine installierbare IPA:** vollständiger Xcode-Build, Apple-Signierung und Tests auf einem echten iPhone stehen aus. Für den nächsten Schritt werden ein Mac mit Xcode und ein passendes Apple-Developer-Team benötigt. Es wurde nichts bei Apple veröffentlicht.
 
 [Deine nächsten Schritte für iOS](ios/NEXT-STEPS.md) · [Automatischen Mac-Build ansehen](https://github.com/goerksk99/Adblock/actions/workflows/ios-check.yml). Der Workflow erzeugt ein unsigniertes Release-Archiv und prüft den Simulator-Start samt Screenshot; Apple-Signierung und iPhone-DNS-Test stehen weiterhin aus. Ein wartender CI-Lauf ist kein bestätigter iOS-Build.
+
+## Android-Nachprüfung 14.11.2026
+
+60 JVM-Tests, 9 Android-10-Gerätetests und Lint bestanden. 43 gemeldete Domains konkret untersucht: 27 von Standardregeln erfasst, 16 nicht. [Prüfbericht und Grenzen](docs/validation/2026-11-14/README.md). Das Android-Projektarchiv enthält die neuen Regressionstests; die APK bleibt unverändert Version 0.1.1.
