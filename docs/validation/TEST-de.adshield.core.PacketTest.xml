@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.PacketTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-12T13:46:26.721Z" hostname="feb09c018765" time="0.086">
+  <properties/>
+  <testcase name="truncatedIpRejected" classname="de.adshield.core.PacketTest" time="0.001"/>
+  <testcase name="fuzzMalformedPackets" classname="de.adshield.core.PacketTest" time="0.037"/>
+  <testcase name="unknownTcpFlowReset" classname="de.adshield.core.PacketTest" time="0.01"/>
+  <testcase name="tcpZeroWindowResumesWhenWindowOpens" classname="de.adshield.core.PacketTest" time="0.003"/>
+  <testcase name="tcpIdleStateIsBounded" classname="de.adshield.core.PacketTest" time="0.002"/>
+  <testcase name="tcpIPv6AndRetransmission" classname="de.adshield.core.PacketTest" time="0.002"/>
+  <testcase name="tcpSplitFramesAndNoDoubleResolution" classname="de.adshield.core.PacketTest" time="0.002"/>
+  <testcase name="largeTcpResponseSegmentsWithoutCorruption" classname="de.adshield.core.PacketTest" time="0.022"/>
+  <testcase name="ipv4HeaderCorruptionRejected" classname="de.adshield.core.PacketTest" time="0.0"/>
+  <testcase name="tcpOutOfOrderRequiresRetransmissionWithoutDuplicateDns" classname="de.adshield.core.PacketTest" time="0.002"/>
+  <testcase name="ipv6UdpRoundTrip" classname="de.adshield.core.PacketTest" time="0.0"/>
+  <testcase name="tcpHonorsAdvertisedMss" classname="de.adshield.core.PacketTest" time="0.002"/>
+  <testcase name="checksumCorruptionRejected" classname="de.adshield.core.PacketTest" time="0.0"/>
+  <testcase name="ipv4UdpRoundTrip" classname="de.adshield.core.PacketTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

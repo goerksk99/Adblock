@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.FragmentTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-12T13:46:26.632Z" hostname="feb09c018765" time="0.079">
+  <properties/>
+  <testcase name="allocationAndMalformedInputAreBounded" classname="de.adshield.core.FragmentTest" time="0.054"/>
+  <testcase name="ipv4OutOfOrderReassemblesWithValidChecksums" classname="de.adshield.core.FragmentTest" time="0.01"/>
+  <testcase name="overlappingIpv6DatagramIsDiscarded" classname="de.adshield.core.FragmentTest" time="0.009"/>
+  <testcase name="ipv6ReassemblesWithoutFragmentHeader" classname="de.adshield.core.FragmentTest" time="0.001"/>
+  <testcase name="atomicIpv6Fragment" classname="de.adshield.core.FragmentTest" time="0.0"/>
+  <testcase name="partialDatagramExpires" classname="de.adshield.core.FragmentTest" time="0.002"/>
+  <testcase name="fragmentLengthMustBeAlignedUnlessFinal" classname="de.adshield.core.FragmentTest" time="0.001"/>
+  <testcase name="unfragmentedPacketPassesThrough" classname="de.adshield.core.FragmentTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

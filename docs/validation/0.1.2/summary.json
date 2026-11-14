@@ -1,0 +1,16 @@
+{
+  "version": "0.1.2",
+  "versionCode": 3,
+  "unit_tests": 64,
+  "android_api29_tests": 9,
+  "lint": "passed",
+  "base_domains": 78215,
+  "hagezi_domains": 272267,
+  "maximum_rules": 326947,
+  "reported_domains_blocked": 43,
+  "reported_domains_tested": 43,
+  "apk_sha256": "3f0491ed36e63aca5afd5488ca647c07932e088414531be6d433e56bdd1f2319",
+  "signing_certificate_unchanged": true,
+  "real_galaxy_test": "requires user verification",
+  "turtlecute_live_browser": "blocked by cloud network policy"
+}

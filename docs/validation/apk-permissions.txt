@@ -1,0 +1,12 @@
+package: de.adshield
+uses-permission: name='android.permission.INTERNET'
+uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.WAKE_LOCK'
+uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
+permission: de.adshield.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='de.adshield.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+
+Exit status: 0

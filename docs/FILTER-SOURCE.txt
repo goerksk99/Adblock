@@ -1,0 +1,9 @@
+Unmodified standard unified StevenBlack/hosts
+Source: https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+Upstream: https://github.com/StevenBlack/hosts
+Copied: 2026-11-12
+List date: 2026-11-08
+Unique domains: 78215
+SHA-256: 35dba9f4adebb171b23c117b5360232ad3b35df761893dcec008e67c56581938
+Upstream commit: 681b61eceef1cabaa434394a97babef5d57bdc78
+Attributions and independent source licenses: THIRD_PARTY_NOTICES.md

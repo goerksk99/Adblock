@@ -1,0 +1,27 @@
+.gradle/
+.kotlin/
+**/build/
+local.properties
+*.jks
+*.keystore
+.idea/
+*.iml
+
+dist/
+
+# iOS local build products/signing
+**/.build/
+**/DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcarchive/
+*.ipa
+*.p12
+*.mobileprovision
+ios/AdShield.xcodeproj/
+ios/App/Info.plist
+ios/Tunnel/Info.plist
+ios/App/AdShield.entitlements
+ios/Tunnel/AdShield.entitlements
+
+ios/Config/Signing.local.xcconfig

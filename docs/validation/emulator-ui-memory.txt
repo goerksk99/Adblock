@@ -1,0 +1,58 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 5802818 Realtime: 5802818
+
+** MEMINFO in pid 5176 [de.adshield] **
+                   Pss  Private  Private  SwapPss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap    30003    29860        0        5    34644    19774    14869
+  Dalvik Heap    15245    15152        0        0    15803     9675     6128
+ Dalvik Other     4564     4368        0        0                           
+        Stack      204      204        0        0                           
+       Ashmem        5        0        0        0                           
+    Other dev       32        0       32        0                           
+     .so mmap     4069      252      764       26                           
+    .jar mmap     2283        0       84        0                           
+    .apk mmap    35411        0    34396        0                           
+    .ttf mmap      162        0       28        0                           
+    .dex mmap        2        0        0        0                           
+    .oat mmap       92        0        0        0                           
+    .art mmap     6036     5592       12        0                           
+   Other mmap      439      116       64        0                           
+      Unknown     1038     1012        0        0                           
+        TOTAL    99616    56556    35380       31    50447    29449    20997
+ 
+ App Summary
+                       Pss(KB)
+                        ------
+           Java Heap:    20756
+         Native Heap:    29860
+                Code:    35524
+               Stack:      204
+            Graphics:        0
+       Private Other:     5592
+              System:     7680
+ 
+               TOTAL:    99616       TOTAL SWAP PSS:       31
+ 
+ Objects
+               Views:        7         ViewRootImpl:        1
+         AppContexts:        5           Activities:        1
+              Assets:        2        AssetManagers:        0
+       Local Binders:        9        Proxy Binders:       28
+       Parcel memory:        5         Parcel count:       22
+    Death Recipients:        0      OpenSSL Sockets:        0
+            WebViews:        0
+ 
+ SQL
+         MEMORY_USED:      833
+  PAGECACHE_OVERFLOW:      245          MALLOC_SIZE:      117
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+         4       24             14         7/59/1  /data/user/0/de.adshield/databases/statistics.db
+         4        8                         0/0/0    (attached) temp
+         4       24             28         3/25/1  /data/user/0/de.adshield/databases/statistics.db (1)
+         4      104             19       24/111/1  /data/user/0/de.adshield/no_backup/androidx.work.workdb
+         4        8                         0/0/0    (attached) temp
+         4      104             24         6/29/1  /data/user/0/de.adshield/no_backup/androidx.work.workdb (1)

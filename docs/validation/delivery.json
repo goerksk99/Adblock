@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "minSdk": 29,
+  "targetSdk": 37,
+  "apk_bytes": 55549427,
+  "apk_sha256": "837990e32ee7713b5abf25191f2b1b30967a13359cbef8a32615339ea2e7819b",
+  "unit_tests_passed": 53,
+  "android_api29_tests_passed": 6,
+  "android_api36": "platform installer failed before app installation",
+  "galaxy_s25": "not available"
+}

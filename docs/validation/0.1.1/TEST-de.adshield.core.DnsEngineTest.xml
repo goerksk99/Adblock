@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.DnsEngineTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-11-12T15:14:14.062Z" hostname="cedfcf62fc91" time="0.14">
+  <properties/>
+  <testcase name="blockedNxdomainWithNegativeTtl" classname="de.adshield.core.DnsEngineTest" time="0.088"/>
+  <testcase name="responseQuestionMismatchRejected" classname="de.adshield.core.DnsEngineTest" time="0.002"/>
+  <testcase name="cacheAgesTtlAndExpires" classname="de.adshield.core.DnsEngineTest" time="0.009"/>
+  <testcase name="aRecord" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="udpTruncatesTcpPreserves" classname="de.adshield.core.DnsEngineTest" time="0.011"/>
+  <testcase name="nonQueryRefused" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="aaaaRecord" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="timeoutBecomesServfail" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="responseIdMismatchRejected" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="malformedQuery" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="invalidWireInputCannotCrashEngine" classname="de.adshield.core.DnsEngineTest" time="0.013"/>
+  <testcase name="ednsLimitIsRespected" classname="de.adshield.core.DnsEngineTest" time="0.002"/>
+  <testcase name="cacheRestoresTransactionId" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <testcase name="upstreamRcodePreserved" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="negativeCacheUsesSoaMinimum" classname="de.adshield.core.DnsEngineTest" time="0.002"/>
+  <testcase name="passThroughSkipsLocalRules" classname="de.adshield.core.DnsEngineTest" time="0.0"/>
+  <testcase name="newBlockRuleOverridesWarmCache" classname="de.adshield.core.DnsEngineTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+</testsuite>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="de.adshield.core.DomainRulesTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-12T13:46:25.960Z" hostname="feb09c018765" time="0.668">
+  <properties/>
+  <testcase name="customDeny" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="caseAndTrailingDot" classname="de.adshield.core.DomainRulesTest" time="0.0"/>
+  <testcase name="labelBoundaries" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="idn" classname="de.adshield.core.DomainRulesTest" time="0.06"/>
+  <testcase name="knownBlocked" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="truncatedListRejected" classname="de.adshield.core.DomainRulesTest" time="0.006"/>
+  <testcase name="declaredCountDetectsOtherwisePlausiblePartialDownload" classname="de.adshield.core.DomainRulesTest" time="0.039"/>
+  <testcase name="atomicSnapshots" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="allowOverridesAllBlocks" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="emptyAndHtmlRejected" classname="de.adshield.core.DomainRulesTest" time="0.002"/>
+  <testcase name="normalAllowed" classname="de.adshield.core.DomainRulesTest" time="0.0"/>
+  <testcase name="invalidDomains" classname="de.adshield.core.DomainRulesTest" time="0.0"/>
+  <testcase name="hostsValidDeduplicated" classname="de.adshield.core.DomainRulesTest" time="0.001"/>
+  <testcase name="bundledMatchingBenchmark" classname="de.adshield.core.DomainRulesTest" time="0.548"/>
+  <system-out><![CDATA[HOST_BENCHMARK domains=78215 parse_ms=362.636519 queries=100000 elapsed_ms=101.26175 average_us=1.0126175000000002
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

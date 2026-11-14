@@ -1,0 +1,2 @@
+lib/arm64-v8a/libandroidx.graphics.path.so PT_LOAD alignment: 16384,16384,16384
+lib/arm64-v8a/libdatastore_shared_counter.so PT_LOAD alignment: 16384,16384,16384

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "de.adshield.core.PacketTest",
+    "tests": "14",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-11-12T13:46:26.721Z",
+    "hostname": "feb09c018765",
+    "time": "0.086"
+  },
+  {
+    "name": "de.adshield.core.DomainRulesTest",
+    "tests": "14",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-11-12T13:46:25.960Z",
+    "hostname": "feb09c018765",
+    "time": "0.668"
+  },
+  {
+    "name": "de.adshield.core.DnsEngineTest",
+    "tests": "17",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-11-12T13:46:25.692Z",
+    "hostname": "feb09c018765",
+    "time": "0.262"
+  },
+  {
+    "name": "de.adshield.core.FragmentTest",
+    "tests": "8",
+    "skipped": "0",
+    "failures": "0",
+    "errors": "0",
+    "timestamp": "2026-11-12T13:46:26.632Z",
+    "hostname": "feb09c018765",
+    "time": "0.079"
+  }
+]

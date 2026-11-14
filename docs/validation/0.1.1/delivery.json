@@ -1,0 +1,9 @@
+{
+  "version": "0.1.1",
+  "versionCode": 2,
+  "unit_tests_passed": 58,
+  "android_api29_tests_passed": 9,
+  "apk_sha256": "86989c7f4f7f8bc16bc50ae6b1077c44d4473dc1a8f1bed0d08f382e654b5f67",
+  "signing_certificate_unchanged": true,
+  "quad9_on_galaxy_s25": "requires user verification"
+}
