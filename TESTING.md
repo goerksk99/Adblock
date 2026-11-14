@@ -112,3 +112,8 @@ Transportfehler bleiben jetzt als Ursache erhalten. Die Oberfläche unterscheide
 ## Aktuell: 0.1.3
 
 67 JVM-Tests und 9 Android-10-Tests bestanden. Direkte UDP-/TCP-DNS-Anfragen an festes Google DNS über IPv4 und IPv6 werden durch den lokalen Filter verarbeitet; Standardmodus entfernt die zusätzlichen Routen. Nachweise und Grenzen unter `docs/validation/0.1.3/README.md`.
+
+
+## Aktuell: 0.1.4
+
+73 JVM- und 10 Android-10-Tests bestanden. Zusätzlich DB-Stresstest, Schutztest über realen TUN, Cache-Invalidierung während laufender Anfrage und verbesserte Fehlerisolation. Nachweise und Grenzen: `docs/validation/0.1.4/README.md`. Keine Akku-/Langzeitbewertung auf dem Nutzergerät vorgetäuscht.

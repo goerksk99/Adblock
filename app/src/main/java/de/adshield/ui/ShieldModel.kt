@@ -25,13 +25,57 @@ class ShieldModel(application:Application):AndroidViewModel(application){
     val stats=app.stats.observe(LocalDate.now().minusDays(90).toString()).stateIn(viewModelScope,SharingStarted.WhileSubscribed(5000),emptyList())
     val apps=MutableStateFlow<List<AppEntry>>(emptyList())
     val notice=MutableStateFlow("")
-    init {viewModelScope.launch(Dispatchers.IO){
+    val diagnostic=MutableStateFlow("Noch nicht geprüft. Der Test prüft den AdShield-DNS-Pfad auf diesem Gerät.")
+    val diagnosing=MutableStateFlow(false)
+    fun diagnose(){
+        if(diagnosing.value)return
+        diagnosing.value=true
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                if(protection.value.stage!=Stage.ACTIVE){diagnostic.value="Bitte zuerst den Schutz aktivieren. Ein pausierter oder ausgeschalteter Filter kann nicht geprüft werden.";return@launch}
+                app.ready.await()
+                val blocked=app.filters.domains.value.firstOrNull{app.engine.blocked(it)}
+                val allowed=listOf("example.com","example.org","example.net").firstOrNull{!app.engine.blocked(it)}
+                if(blocked==null || allowed==null){diagnostic.value="Keine geeigneten Testdomains: Bitte deine Domain-Ausnahmen prüfen.";return@launch}
+                val cm=app.getSystemService(android.net.ConnectivityManager::class.java)
+                val network=cm.allNetworks.firstOrNull{n -> cm.getNetworkCapabilities(n)?.hasTransport(android.net.NetworkCapabilities.TRANSPORT_VPN)==true && cm.getLinkProperties(n)?.dnsServers?.any{it.hostAddress==DnsVpnService.DNS4}==true}
+                    ?:error("AdShield-DNS-Route nicht gefunden. Bitte Schutz erneut aktivieren.")
+                val result=de.adshield.core.ProtectionProbe.run(blocked,allowed){query ->
+                    java.net.DatagramSocket().use {socket ->
+                        network.bindSocket(socket);socket.soTimeout=6000
+                        socket.connect(java.net.InetAddress.getByName(DnsVpnService.DNS4),53)
+                        socket.send(java.net.DatagramPacket(query,query.size))
+                        val response=java.net.DatagramPacket(ByteArray(4096),4096);socket.receive(response)
+                        response.data.copyOf(response.length)
+                    }
+                }
+                diagnostic.value=when(result){
+                    de.adshield.core.ProtectionProbe.Result.HEALTHY->"Erfolgreich: Lokale Sperre und normale DNS-Auflösung funktionieren. Browser mit eigenem DNS können trotzdem abweichen."
+                    de.adshield.core.ProtectionProbe.Result.BLOCKING_FAILED->"Die Testdomain wurde nicht gesperrt. Bitte Modus und Ausnahmen prüfen und den Schutz neu starten."
+                    de.adshield.core.ProtectionProbe.Result.RESOLUTION_FAILED->"Die Sperre funktioniert, normale Auflösung aber nicht. Internetverbindung und Quad9-Erreichbarkeit prüfen."
+                    else->"Die DNS-Antwort war ungültig. Bitte den Schutz erneut starten."
+                }
+                val privateDns=android.provider.Settings.Global.getString(app.contentResolver,"private_dns_mode")
+                if(privateDns=="hostname")diagnostic.value+=" Android Private DNS ist strikt eingestellt. Bei Browserproblemen dessen Einstellung oder den DNS-Umgehungsschutz prüfen."
+            }catch(e:kotlinx.coroutines.CancellationException){throw e}
+            catch(e:Exception){diagnostic.value=if(e is java.net.SocketTimeoutException)"Der DNS-Test hat keine Antwort erhalten. Verbindung prüfen; bei festem Browser-DNS den zusätzlichen Umgehungsschutz testweise ausschalten." else "Der Schutztest konnte nicht abgeschlossen werden. Bitte VPN und Verbindung prüfen und erneut testen."}
+            finally{diagnosing.value=false}
+        }
+    }
+    @Volatile private var appsLoaded=false
+    fun loadApps(){
+        if(appsLoaded)return
+        appsLoaded=true
+        viewModelScope.launch(Dispatchers.IO){
+        try {
         val pm=app.packageManager
         val intent=Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
         apps.value=pm.queryIntentActivities(intent,PackageManager.MATCH_ALL).map{it.activityInfo.applicationInfo}
             .distinctBy{it.packageName}.filter{it.packageName!=app.packageName}.mapNotNull{
                 runCatching{AppEntry(pm.getApplicationLabel(it).toString(),it.packageName,pm.getApplicationIcon(it).toBitmap(80,80))}.getOrNull()
             }.sortedBy{it.name.lowercase()}
+        }catch(e:CancellationException){throw e}
+        catch(e:Exception){appsLoaded=false;notice.value="Die App-Liste konnte nicht geladen werden. Bitte den Tab erneut öffnen."}
     }}
     fun service(action:String){runCatching{app.startForegroundService(Intent(app,DnsVpnService::class.java).setAction(action))}.onFailure{notice.value="Android konnte den Dienst nicht starten: ${it.message}"}}
     fun rule(value:String,blocked:Boolean,add:Boolean){viewModelScope.launch{

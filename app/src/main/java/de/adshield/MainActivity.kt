@@ -80,10 +80,13 @@ class MainActivity:ComponentActivity(){
     val filter by model.filter.collectAsStateWithLifecycle()
     val stats by model.stats.collectAsStateWithLifecycle()
     val statsError by model.statsError.collectAsStateWithLifecycle()
+    val diagnostic by model.diagnostic.collectAsStateWithLifecycle()
+    val diagnosing by model.diagnosing.collectAsStateWithLifecycle()
     val apps by model.apps.collectAsStateWithLifecycle()
     val notice by model.notice.collectAsStateWithLifecycle()
     val snackbar=remember{SnackbarHostState()}
     LaunchedEffect(notice){if(notice.isNotEmpty()){snackbar.showSnackbar(notice);model.notice.value=""}}
+    LaunchedEffect(page){if(page==2)model.loadApps()}
     val titles=listOf("Übersicht","Statistiken","Apps","Ausnahmen","Einstellungen")
     val symbols=listOf(Icons.Default.Home,Icons.Default.Info,Icons.Default.List,Icons.Default.Check,Icons.Default.Settings)
     Scaffold(topBar={TopAppBar(title={Column{Text("AdShield",fontWeight=FontWeight.Bold);Text("Privater DNS-Schutz",style=MaterialTheme.typography.labelMedium)}})},
@@ -97,7 +100,7 @@ class MainActivity:ComponentActivity(){
                 1 -> Statistics(stats,statsError,{reset=true})
                 2 -> AppsScreen(apps,settings.excluded,model::exclude)
                 3 -> RulesScreen(settings,model::rule)
-                else -> SettingsScreen(settings,filter,model::update,model::interval,model::theme,model::maximal,model::dnsGuard,vpnSettings)
+                else -> SettingsScreen(settings,filter,model::update,model::interval,model::theme,model::maximal,model::dnsGuard,diagnostic,diagnosing,model::diagnose,vpnSettings)
             }
         }
     }
@@ -122,7 +125,7 @@ class MainActivity:ComponentActivity(){
             if(state.stage==Stage.STARTING)LinearProgressIndicator(Modifier.fillMaxWidth())
         }}
         item{Row(horizontalArrangement=Arrangement.spacedBy(12.dp)){Metric("Blockierte Anfragen heute",today.blocked.toString(),Modifier.weight(1f));Metric("Blockierungsquote",percent(today.blocked,today.total),Modifier.weight(1f))}}
-        item{InfoCard("${filter.count} Filterdomains",if(filter.bundled)"Aktive Domainregeln · Quellen und Schutzmodus unter Einstellungen" else "Letztes Update: ${date(filter.updated)}")}
+        item{InfoCard(if(filter.count==0)"Filter werden geladen …" else "${filter.count} Filterdomains",if(filter.bundled)"Aktive Domainregeln · Quellen und Schutzmodus unter Einstellungen" else "Letztes Update: ${date(filter.updated)}")}
         if(state.alwaysOn)item{InfoCard("Always-on VPN",if(state.lockdown)"Android blockiert Verbindungen ohne VPN. Ausnahmen und Fehler können die Verbindung sperren. Bei Problemen diese Android-Option deaktivieren." else "Der Ausschalter pausiert den lokalen Filter. Android hält die DNS-Verbindung zu Quad9 aktiv.")}
         item{InfoCard("Was der Schutz leisten kann","Bekannte Werbe-, Tracking- und Bedrohungsdomains werden reduziert. DNS-Filter entfernen keine Seitenelemente und blockieren YouTube-, Instagram- oder TikTok-Werbung nicht zuverlässig. Blockierte Anfragen sind keine gezählten Werbeanzeigen.")}
     }
@@ -182,11 +185,13 @@ class MainActivity:ComponentActivity(){
         if(rules.isEmpty())item{Text("Noch keine eigenen Regeln.")}
     }
 }
-@Composable private fun SettingsScreen(settings:de.adshield.data.Settings,filter:FilterInfo,update:()->Unit,interval:(Long)->Unit,theme:(String)->Unit,maximal:(Boolean)->Unit,dnsGuard:(Boolean)->Unit,vpnSettings:()->Unit){
+@Composable private fun SettingsScreen(settings:de.adshield.data.Settings,filter:FilterInfo,update:()->Unit,interval:(Long)->Unit,theme:(String)->Unit,maximal:(Boolean)->Unit,dnsGuard:(Boolean)->Unit,diagnostic:String,diagnosing:Boolean,diagnose:()->Unit,vpnSettings:()->Unit){
     LazyColumn(Modifier.fillMaxSize(),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)){
         item{PageTitle("Einstellungen","Privat. Lokal. Ohne Konto.")}
         item{ListItem(headlineContent={Text("Maximaler Schutz")},supportingContent={Text("HaGeZi Ultimate + zusätzliche Trackingregeln. Kann App-Funktionen einschränken. Erlaubte Domains haben Vorrang.")},trailingContent={Switch(checked=settings.maximal,onCheckedChange=maximal)})}
         item{ListItem(headlineContent={Text("Bekannte DNS-Umgehungen einschränken")},supportingContent={Text("Im Maximalmodus: feste öffentliche DNS-Adressen filtern und bekannte verschlüsselte Resolver-Ziele sperren. Striktes Browser-DNS kann dann ausfallen; bei Bedarf hier ausschalten. Unbekannte Resolver bleiben möglich.")},trailingContent={Switch(checked=settings.dnsGuard,onCheckedChange=dnsGuard,enabled=settings.maximal)})}
+        item{InfoCard("Schutztest auf diesem Gerät",diagnostic)}
+        item{Button(onClick=diagnose,enabled=!diagnosing){Text(if(diagnosing)"DNS-Pfad wird geprüft …" else "Schutz jetzt prüfen")}}
         item{InfoCard("Filterquellen: StevenBlack + HaGeZi Ultimate","Standardmodus: StevenBlack. Maximalmodus: zusätzlich HaGeZi Ultimate und gezielte Tracking-Sperren. MIT/GPL-3.0 und Bedingungen einzelner Quelllisten. Quellen und Hinweise liegen in der App unter Lizenzen.\n${filter.count} eindeutige Domains\n${if(filter.bundled)"Vorinstallierte Stände: StevenBlack 08.11., HaGeZi 14.11.2026" else "Aktualisiert: "+date(filter.updated)}\nSHA-256: ${filter.digest.take(16)}…")}
         item{Button(onClick=update,enabled=!filter.updating){Text(if(filter.updating)"Wird geprüft …" else "Filter jetzt aktualisieren")}}
         if(settings.updateError.isNotEmpty())item{Text(settings.updateError,color=MaterialTheme.colorScheme.error)}
@@ -198,7 +203,7 @@ class MainActivity:ComponentActivity(){
         item{InfoCard("Private DNS und Browser","Android Private DNS, Chrome Secure DNS und eigene verschlüsselte Resolver anderer Apps können lokale DNS-Filter umgehen oder Konflikte auslösen. Prüfe diese Einstellungen manuell, falls keine Anfragen gezählt werden. Keine pauschale Abschaltung sicherer Verbindungen nötig. Im Maximalmodus werden mit aktivem Umgehungsschutz ausgewählte feste Resolver-Adressen erfasst. Unbekannte Ziele, eigene Resolver und feste Inhalts-IP-Adressen können den Schutz weiter umgehen. Es ist nur ein regulärer Android-VPN-Dienst gleichzeitig möglich.")}
         item{InfoCard("Datenschutz","Keine Konten, Werbung, Telemetrie oder Domainhistorie. Nur aggregierte Tageszähler werden lokal für bis zu 90 Tage gespeichert. Keine app-spezifischen DNS-Statistiken. Ausgehende Verbindungen: Quad9 für DNS und raw.githubusercontent.com für Filterupdates. Updates verraten dem Listenanbieter deine IP-Adresse. Einstellungen und Regeln bleiben auf dem Gerät; Android-Backups sind deaktiviert.")}
         item{LicenseCard()}
-        item{InfoCard("AdShield 0.1.3 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
+        item{InfoCard("AdShield 0.1.4 · Entwicklungsversion","Quelloffene native Android-App. Tests auf einem echten Galaxy S25 stehen noch aus. DNS-Filter können nicht alle Pop-ups und Weiterleitungen verhindern. Bei Problemen Schutz ausschalten und Android-VPN-Lockdown prüfen.")}
     }
 }
 @Composable private fun LicenseCard(){

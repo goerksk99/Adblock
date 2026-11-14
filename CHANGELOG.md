@@ -1,3 +1,13 @@
+# 0.1.4 – Stabilität und Diagnose
+
+- In-App-Schutztest für lokale Sperre mit AdShield-Kennzeichnung und normale DNS-Auflösung; Hinweise bei striktem Android Private DNS.
+- Nicht blockierende Statistik-Aggregation statt wartender DNS-Threads bei voller Ereigniswarteschlange; genaue Zähler bei angehaltener Datenbank getestet.
+- Cache-Generation schützt vor erneutem Befüllen durch alte Antworten nach einem Netzwechsel.
+- Verspätete Fehler alter Tunnels beeinflussen keine neu aufgebaute Verbindung.
+- Gebündelte Netzwechsel-Prüfungen mit begrenzter Wiederholung; parallele Paketfehler beenden währenddessen nicht voreilig das VPN.
+- App-Liste und Icons erst beim Öffnen des Apps-Tabs; verständliche Filter-Ladeanzeige.
+- Domainregeln und DNS-Umgehungsschutz bleiben erhalten; Paketname und Signatur unverändert.
+
 # 0.1.3 – bekannte DNS-Umgehungen einschränken
 
 - Zusätzlicher voreingeschalteter, abschaltbarer Schutz im Maximalmodus: 20 exakte öffentliche Resolver-IP-Routen; direkte UDP/TCP-DNS-Anfragen gehen durch den lokalen Filter.

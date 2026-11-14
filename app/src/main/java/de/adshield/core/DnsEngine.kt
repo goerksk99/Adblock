@@ -13,7 +13,8 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
     private val cache = object : LinkedHashMap<String, Entry>(256, .75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Entry>?) = size > 512
     }
-    @Synchronized fun clearCache() = cache.clear()
+    private var cacheGeneration = 0L
+    @Synchronized fun clearCache() { cacheGeneration++;cache.clear() }
     fun resolve(bytes: ByteArray, tcp: Boolean = false, filtering: Boolean = true): DnsResult {
         val query = try { Message(bytes) } catch (_: Exception) { return DnsResult(bareError(bytes), Outcome.ERROR) }
         val question = query.question
@@ -32,7 +33,8 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
             // Include every query flag and EDNS option in the key; do not mix DNSSEC/ECS requests.
             val key = java.util.Base64.getEncoder().encodeToString(normalized.toWire())
             val now = clock()
-            val cached = synchronized(this) { cache[key]?.takeIf { now - it.created < it.ttl * 1000 } }
+            val snapshot = synchronized(this) { cacheGeneration to cache[key]?.takeIf { now - it.created < it.ttl * 1000 } }
+            val cached = snapshot.second
             val response: Message
             if (cached != null) {
                 val age = ((now - cached.created) / 1000).coerceAtLeast(0)
@@ -57,7 +59,7 @@ class DnsEngine(private val filter: FilterEngine, private val upstream: DnsUpstr
                     val records = (Section.ANSWER..Section.ADDITIONAL).flatMap { response.getSection(it) }.filterNot { it is OPTRecord }
                     val negative = response.getSection(Section.AUTHORITY).filterIsInstance<SOARecord>().minOfOrNull { minOf(it.minimum, it.ttl) }
                     val ttl = if (response.rcode == Rcode.NXDOMAIN || response.getSection(Section.ANSWER).isEmpty()) minOf(negative ?: 0, records.minOfOrNull { it.ttl } ?: 0) else records.minOfOrNull { it.ttl } ?: 0
-                    if (ttl > 0) synchronized(this) { cache[key] = Entry(raw, now, ttl.coerceAtMost(300)) }
+                    if (ttl > 0) synchronized(this) { if(cacheGeneration == snapshot.first)cache[key] = Entry(raw, now, ttl.coerceAtMost(300)) }
                 }
             }
             response.header.id = query.header.id

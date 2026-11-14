@@ -84,4 +84,27 @@ class PersistenceTest {
             assertEquals(DailyStats("2026-11-12",1,0,1,0),cleared.single())
         }finally{scope.cancel();db.close()}
     }
+    @Test fun slowDatabaseNeverBackpressuresDnsAndCountersRemainExact()=runBlocking {
+        val db=Room.inMemoryDatabaseBuilder(context,StatsDatabase::class.java).build()
+        val scope=CoroutineScope(SupervisorJob()+Dispatchers.Default)
+        val entered=CompletableDeferred<Unit>();val release=CompletableDeferred<Unit>()
+        val real=db.stats()
+        val slow=object:StatsDao by real {
+            override suspend fun addCounts(day:String,total:Long,blocked:Long,allowed:Long,errors:Long){
+                entered.complete(Unit);release.await();real.addCounts(day,total,blocked,allowed,errors)
+            }
+        }
+        val executor=java.util.concurrent.Executors.newSingleThreadExecutor()
+        try {
+            val recorder=StatsRecorder(slow,scope)
+            recorder.record("2026-11-14",Outcome.ALLOWED)
+            withTimeout(30000){entered.await()}
+            val start=System.nanoTime()
+            val producer=executor.submit { repeat(20000){recorder.record("2026-11-14",Outcome.BLOCKED)} }
+            try {producer.get(10,java.util.concurrent.TimeUnit.SECONDS)}finally{release.complete(Unit)}
+            println("STATS_STALL records=20000 producer_ms="+(System.nanoTime()-start)/1000000)
+            val rows=withTimeout(30000){real.observe("2026-11-14").first{it.sumOf{r->r.total}==20001L}}
+            assertEquals(20000L,rows.sumOf{it.blocked});assertTrue(recorder.error.value.isEmpty())
+        }finally{release.complete(Unit);executor.shutdownNow();scope.cancel();db.close()}
+    }
 }

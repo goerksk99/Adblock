@@ -61,3 +61,8 @@ Abgerufen am 12.11.2026:
 Im Instrumentierungstest wird nur der Upstream über eine ausschließlich im Debug-Build ausgewertete In-Process-Testnaht ersetzt. Der echte Android-VPN-Dienst, TUN, Paketparser, Domainfilter, UDP/TCP und Datenbanken bleiben aktiv. Ohne ausdrücklich gestartete Instrumentierung ist die Testnaht null und die App verwendet Quad9. Es gibt keine fiktiven Werte oder Testschalter in der normalen Oberfläche. Testpaket-Beobachtung ist ebenfalls nur über diese Testnaht aktiviert und bleibt sonst vollständig aus. Die Tests binden eigene Client-Sockets ausdrücklich an das VPN-Netz, weil direkte Sockets der VPN-Eigentümer-App sonst die physische Verbindung wählen können.
 
 Keine Behauptung getesteter Android-17- oder Galaxy-S25-Laufzeitkompatibilität ohne entsprechenden Testbericht.
+
+
+## Änderungen 0.1.4
+
+StatsRecorder sammelt Zähler unter einem kurzen Speicher-Lock, maximal acht Tagesgruppen, mit conflated Wake-Channel. Kein runBlocking/SQLite-Warten auf DNS-Arbeitsthreads. Ein separater Writer speichert Batches; Generationen verhindern ein Wiederauftauchen gelöschter Zähler. DNS-Cache-Clears erhöhen ebenfalls eine Generation: laufende Antworten dürfen danach keinen alten Cache-Eintrag schreiben. Fehlerpfade prüfen die aktuelle Tunnel-/Engine-Identität auch nach dem Lifecycle-Lock. Netzprüfungen sind ereignisgesteuert, kurz gebündelt und auf zwei Versuche begrenzt; kein zusätzlicher periodischer Gesundheitspoll. Der Schutztest bindet zwei bekannte Testanfragen an das eigene VPN-Netz, validiert Transaktions-ID/Frage/Antwort und die lokale Sperrkennzeichnung. Kein Domain-Verlaufsprotokoll.

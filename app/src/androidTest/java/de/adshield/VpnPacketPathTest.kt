@@ -86,6 +86,17 @@ class VpnPacketPathTest {
                 val v6=tcp(address,"example.com.",Type.AAAA)
                 assertEquals(Rcode.NOERROR,v6.rcode);assertTrue(v6.getSection(Section.ANSWER).first() is AAAARecord)
             }
+            val owner=object:androidx.lifecycle.ViewModelStoreOwner {override val viewModelStore=androidx.lifecycle.ViewModelStore()}
+            val modelRef=java.util.concurrent.atomic.AtomicReference<de.adshield.ui.ShieldModel>()
+            automation.let { InstrumentationRegistry.getInstrumentation().runOnMainSync {
+                modelRef.set(androidx.lifecycle.ViewModelProvider(owner,androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(app))[de.adshield.ui.ShieldModel::class.java])
+            }}
+            try {
+                val model=modelRef.get();model.diagnose()
+                withTimeout(30000){while(model.diagnosing.value)delay(50)}
+                assertTrue(model.diagnostic.value,model.diagnostic.value.startsWith("Erfolgreich:"))
+                println("IN_APP_DIAGNOSTIC_PASSED")
+            }finally{InstrumentationRegistry.getInstrumentation().runOnMainSync{owner.viewModelStore.clear()}}
             // QUIC/DoH traffic at a captured resolver must be discarded, not sent to the DNS resolver.
             val beforeEncrypted=received.get()
             DatagramSocket().use { socket ->

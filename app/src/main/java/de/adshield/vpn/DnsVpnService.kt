@@ -32,14 +32,14 @@ class DnsVpnService:VpnService() {
     private val scope=CoroutineScope(SupervisorJob()+Dispatchers.IO)
     private val lifecycle=Mutex()
     private val app get()=application as AdShieldApp
-    private var tunnel:ParcelFileDescriptor?=null
+    @Volatile private var tunnel:ParcelFileDescriptor?=null
     private var inputStream:FileInputStream?=null
     private var reader:Job?=null;private var ticker:Job?=null
-    private var upstream:ManagedUpstream?=null
-    private var engine:DnsEngine?=null
+    @Volatile private var upstream:ManagedUpstream?=null
+    @Volatile private var engine:DnsEngine?=null
     private var tcp:TcpDnsServer?=null
     private var pool:ThreadPoolExecutor?=null
-    private var healthJob:Job?=null
+    @Volatile private var healthJob:Job?=null
     @Volatile private var guardActive=false
     @Volatile private var paused=false
     @Volatile private var ending=false
@@ -142,7 +142,7 @@ class DnsVpnService:VpnService() {
                                 if (tunnel === fd && !ending) {
                                     scope.launch {
                                         lifecycle.withLock {
-                                            fail("Fehler bei der DNS-Paketverarbeitung. VPN wurde getrennt.")
+                                            if(tunnel===fd && !ending)fail("Fehler bei der DNS-Paketverarbeitung. VPN wurde getrennt.")
                                         }
                                     }
                                 }
@@ -150,8 +150,8 @@ class DnsVpnService:VpnService() {
                         }
                     }
                 }
-                if(tunnel===fd && !ending)lifecycle.withLock{fail("Die VPN-Schnittstelle wurde geschlossen.")}
-            }catch(_:Exception){if(tunnel===fd && !ending)lifecycle.withLock{fail("VPN-Verbindung unterbrochen. Bitte erneut aktivieren.")}}
+                if(tunnel===fd && !ending)lifecycle.withLock{if(tunnel===fd && !ending)fail("Die VPN-Schnittstelle wurde geschlossen.")}
+            }catch(_:Exception){if(tunnel===fd && !ending)lifecycle.withLock{if(tunnel===fd && !ending)fail("VPN-Verbindung unterbrochen. Bitte erneut aktivieren.")}}
         }
         ticker=scope.launch {
             try {
@@ -194,16 +194,22 @@ class DnsVpnService:VpnService() {
         }
         check(result == true) { "Android hat die DNS-Routen nicht rechtzeitig eingerichtet. Bitte erneut aktivieren." }
     }
-    private fun verifyNetwork() {
+    @Synchronized private fun verifyNetwork() {
         if (tunnel == null || ending) { return }
         healthJob?.cancel()
         healthJob = scope.launch {
+            delay(600) // Coalesce bursts during Wi-Fi/mobile handovers. No idle polling.
             lifecycle.withLock {
                 val dns = engine ?: return@withLock
                 val fd = tunnel ?: return@withLock
                 publish(Stage.STARTING, "Netzwechsel · DNS wird erneut geprüft …")
                 val query = Message.newQuery(Record.newRecord(Name("example.com."), Type.A, DClass.IN))
-                val result = dns.resolve(query.toWire(), filtering = false)
+                var result = dns.resolve(query.toWire(), filtering = false)
+                ensureActive()
+                if(result.transportFailure){
+                    delay(700)
+                    result=dns.resolve(query.toWire(),filtering=false)
+                }
                 val response = Message(result.wire)
                 ensureActive()
                 if (tunnel !== fd) { return@withLock }
@@ -225,12 +231,15 @@ class DnsVpnService:VpnService() {
     }
     private fun resolve(dns:DnsEngine,query:ByteArray,tcp:Boolean):DnsResult {
         val result=dns.resolve(query,tcp,!paused)
+        if(engine !== dns)return result // Late replies from a replaced tunnel cannot affect its successor.
         val date=LocalDate.now()
         val day=date.toString()
         if(pruneDay.getAndSet(day)!=day)app.scope.launch{app.stats.prune(date.minusDays(90).toString())}
         app.recorder.record(day,result.outcome)
         if(result.transportFailure){
-            if(failures.incrementAndGet()>=5)scope.launch{lifecycle.withLock{if(tunnel!=null)fail("DNS antwortet wiederholt nicht. VPN wurde getrennt; bei Android-Lockdown kann Internet gesperrt bleiben.")}}
+            // During a handover the bounded health check owns the teardown decision.
+            if(healthJob?.isActive==true)return result
+            if(failures.incrementAndGet()>=5)scope.launch{lifecycle.withLock{if(tunnel!=null && engine===dns)fail("DNS antwortet wiederholt nicht. VPN wurde getrennt; bei Android-Lockdown kann Internet gesperrt bleiben.")}}
         }else failures.set(0)
         return result
     }
@@ -241,6 +250,7 @@ class DnsVpnService:VpnService() {
         stopForeground(STOP_FOREGROUND_REMOVE);stopSelf()
     }
     private fun release(){
+        healthJob?.cancel();healthJob=null
         val old=tunnel;tunnel=null
         runCatching{inputStream?.close()};inputStream=null
         runCatching{old?.close()};reader?.cancel();reader=null;ticker?.cancel();ticker=null

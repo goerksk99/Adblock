@@ -41,4 +41,19 @@ class DnsEngineTest {
         val q=query().toWire();e.resolve(q);now=19000;e.resolve(q);assertEquals(1,calls);now=21000;e.resolve(q);assertEquals(2,calls)
     }
     @Test fun invalidWireInputCannotCrashEngine(){val random=java.util.Random(83);val e=DnsEngine(FilterEngine(),{throw SocketTimeoutException()});repeat(1000){val bytes=ByteArray(random.nextInt(256));random.nextBytes(bytes);e.resolve(bytes)}}
+    @Test fun cacheClearDuringInflightResponseDoesNotRepopulateStaleCache(){
+        val entered=java.util.concurrent.CountDownLatch(1);val release=java.util.concurrent.CountDownLatch(1)
+        val calls=java.util.concurrent.atomic.AtomicInteger()
+        val e=DnsEngine(FilterEngine(),{raw ->
+            if(calls.incrementAndGet()==1){entered.countDown();check(release.await(5,java.util.concurrent.TimeUnit.SECONDS))}
+            answer(raw)
+        })
+        val executor=java.util.concurrent.Executors.newSingleThreadExecutor()
+        try {
+            val first=executor.submit<DnsResult>{e.resolve(query().toWire())}
+            assertTrue(entered.await(5,java.util.concurrent.TimeUnit.SECONDS));e.clearCache();release.countDown()
+            assertEquals(Outcome.ALLOWED,first.get(5,java.util.concurrent.TimeUnit.SECONDS).outcome)
+            e.resolve(query().toWire());assertEquals(2,calls.get())
+        }finally{release.countDown();executor.shutdownNow()}
+    }
 }

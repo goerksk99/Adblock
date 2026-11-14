@@ -1,0 +1,15 @@
+{
+  "version": "0.1.4",
+  "versionCode": 5,
+  "unit_tests": 73,
+  "android_api29_tests": 10,
+  "lint": "passed",
+  "statistics_stall_events": 20000,
+  "statistics_exact_total": 20001,
+  "diagnostic_via_real_tun": "passed with controlled resolver",
+  "list_rules": 326947,
+  "signature_unchanged": true,
+  "apk_sha256": "c2502ba2dbf1ec66dd79c32a682e953152deae8d79da0ac66d54d0f359ba1783",
+  "battery_on_phone": "not measured",
+  "phone_long_term_test": "not performed"
+}
