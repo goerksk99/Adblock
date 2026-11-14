@@ -1,0 +1,15 @@
+{
+  "version": "0.1.5",
+  "versionCode": 6,
+  "unit_tests": 76,
+  "android_api29_tests": 10,
+  "lint": "passed",
+  "oisd_entries": 228023,
+  "previous_rules": 326947,
+  "effective_rules": 455868,
+  "newly_covered_domains": 121559,
+  "additional_dns_cases": 600,
+  "signature_unchanged": true,
+  "apk_sha256": "772eefeaff126afa5a9753fd43ee3a141ddeb984e506eb0184d2a6159fd5ad5f",
+  "live_browser_score": "not measured"
+}

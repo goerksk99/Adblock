@@ -1,3 +1,10 @@
+# 0.1.5 – zusätzliche Domain-Abdeckung
+
+- OISD Big zusätzlich im Maximalmodus: insgesamt 455.868 eindeutige Listenregeln; 121.559 OISD-Domains waren vorher auch durch keine Elternregel erfasst.
+- Strenger Domain-Wildcard-Parser mit Format-/Anzahl-/Duplikat-/Größenprüfung; keine ignorierten Kontext- oder Regex-Ausnahmen.
+- Gemeinsame atomare Updates aller drei Quellen; ungültige dritte Liste behält den bisherigen Stand. Bestehende Zwei-Listen-Caches werden beim Laden ergänzt.
+- OISD-Quellheader und GPL-3.0-Lizenz enthalten. Standardmodus, Ausnahmen und übrige Schutzfunktionen unverändert.
+
 # 0.1.4 – Stabilität und Diagnose
 
 - In-App-Schutztest für lokale Sperre mit AdShield-Kennzeichnung und normale DNS-Auflösung; Hinweise bei striktem Android Private DNS.

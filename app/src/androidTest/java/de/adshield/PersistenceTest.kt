@@ -43,12 +43,15 @@ class PersistenceTest {
         val isolatedDir=File(context.cacheDir,"filter-test-${System.nanoTime()}").apply{mkdirs()}
         val isolated=object:android.content.ContextWrapper(context){override fun getFilesDir()=isolatedDir}
         val bundled="# StevenBlack/hosts\n"+(0 until 2000).joinToString("\n"){"0.0.0.0 ad-$it.example"}
+        var additionalBody=context.assets.open("oisd-big.txt").bufferedReader().use{it.readText()}
         var maximumBody=context.assets.open("hagezi-ultimate.txt").bufferedReader().use{it.readText()}
         var body=bundled
         var code=200
-        val http=OkHttpClient.Builder().addInterceptor{chain ->Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(code).message("Test response").body((if(chain.request().url.toString()==MaximalRules.URL)maximumBody else body).toResponseBody("text/plain".toMediaType())).build()}.build()
+        val http=OkHttpClient.Builder().addInterceptor{chain ->Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(code).message("Test response").body((when(chain.request().url.toString()){MaximalRules.URL->maximumBody;OisdRules.URL->additionalBody;else->body}).toResponseBody("text/plain".toMediaType())).build()}.build()
         val repo=FilterRepository(isolated,store,http){bundled};repo.load()
         assertTrue(repo.update());val old=repo.info.value
+        additionalBody="broken";assertFalse(repo.update());assertEquals(old.digest,repo.info.value.digest)
+        additionalBody=context.assets.open("oisd-big.txt").bufferedReader().use{it.readText()}
         maximumBody="broken";assertFalse(repo.update());assertEquals(old.digest,repo.info.value.digest)
         maximumBody=context.assets.open("hagezi-ultimate.txt").bufferedReader().use{it.readText()}
         body="";assertFalse(repo.update());assertEquals(old.digest,repo.info.value.digest)

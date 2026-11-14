@@ -58,5 +58,6 @@ data.mistat.india.xiaomi.com
         require(lines.size == expected && parsed.size == expected) { "Zusatzfilter unvollständig; bisherige Listen bleiben aktiv" }
         return parsed
     }
-    fun effective(base: Set<String>, maximum: Set<String>, enabled: Boolean) = if(enabled) base + maximum + supplemental else base
+    fun effective(base: Set<String>, maximum: Set<String>, enabled: Boolean, additional:Set<String> = emptySet()):Set<String> =
+        if(enabled) HashSet<String>().apply{addAll(base);addAll(maximum);addAll(supplemental);addAll(additional)} else base
 }

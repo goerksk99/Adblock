@@ -117,3 +117,8 @@ Transportfehler bleiben jetzt als Ursache erhalten. Die Oberfläche unterscheide
 ## Aktuell: 0.1.4
 
 73 JVM- und 10 Android-10-Tests bestanden. Zusätzlich DB-Stresstest, Schutztest über realen TUN, Cache-Invalidierung während laufender Anfrage und verbesserte Fehlerisolation. Nachweise und Grenzen: `docs/validation/0.1.4/README.md`. Keine Akku-/Langzeitbewertung auf dem Nutzergerät vorgetäuscht.
+
+
+## Aktuell: 0.1.5
+
+76 JVM- und 10 Android-10-Tests bestanden. 455.868 eindeutige Listenregeln, 121.559 erstmals abgedeckte OISD-Domains. Nachweise und Abgrenzung zur sichtbaren Werbequote: `docs/validation/0.1.5/README.md`.
